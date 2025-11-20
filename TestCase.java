@@ -11,29 +11,33 @@ public class TestCase
         this.expectedOutput = expectedOutput;
     }
 
-    // Getters
-    public String getTitle() 
-    { 
-        return title; 
-    }
-    public String getInputData() { return inputData; 
-
-    }
-    public String getExpectedOutput() { return expectedOutput; 
-        
+    public String getTitle()
+    {
+        return title;
     }
 
-    // Setters
-    public void setTitle(String title) 
-    { 
-        this.title = title; 
+    public void setTitle(String title)
+    {
+        this.title = title;
     }
-    public void setInputData(String inputData) 
-    { 
-        this.inputData = inputData; 
+
+    public String getInputData()
+    {
+        return inputData;
     }
-    public void setExpectedOutput(String expectedOutput) 
-    { 
-        this.expectedOutput = expectedOutput; 
+
+    public void setInputData(String inputData)
+    {
+        this.inputData = inputData;
+    }
+
+    public String getExpectedOutput()
+    {
+        return expectedOutput;
+    }
+
+    public void setExpectedOutput(String expectedOutput)
+    {
+        this.expectedOutput = expectedOutput;
     }
 }

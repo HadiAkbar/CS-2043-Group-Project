@@ -12,14 +12,14 @@ public class TestSuite
         this.testCases = new ArrayList<>();
     }
 
-    public void addTestCase(TestCase testCase)
+    public String getTitle()
     {
-        testCases.add(testCase);
+        return title;
     }
 
-    public void removeTestCase(TestCase testCase)
+    public void setTitle(String title)
     {
-        testCases.remove(testCase);
+        this.title = title;
     }
 
     public List<TestCase> getTestCases()
@@ -27,6 +27,16 @@ public class TestSuite
         return testCases;
     }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public void addTestCase(TestCase tc)
+    {
+        if (tc != null && !testCases.contains(tc))
+        {
+            testCases.add(tc);
+        }
+    }
+
+    public void removeTestCase(TestCase tc)
+    {
+        testCases.remove(tc);
+    }
 }
