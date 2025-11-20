@@ -3,12 +3,14 @@ public class TestCase
     private String title;
     private String inputData;
     private String expectedOutput;
+    private String type;
 
-    public TestCase(String title, String inputData, String expectedOutput)
+    public TestCase(String title, String inputData, String expectedOutput, String type)
     {
         this.title = title;
         this.inputData = inputData;
         this.expectedOutput = expectedOutput;
+        this.type = type;
     }
 
     public String getTitle()
@@ -39,5 +41,15 @@ public class TestCase
     public void setExpectedOutput(String expectedOutput)
     {
         this.expectedOutput = expectedOutput;
+    }
+
+    public String getType()
+    {
+        return type;
+    }
+
+    public void setType(String type)
+    {
+        this.type = type;
     }
 }
