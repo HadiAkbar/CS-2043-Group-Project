@@ -6,6 +6,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import java.io.File;
 
+import javax.swing.text.html.ListView;
+
 public class Ui extends Application
 {
     private Coordinator coordinator;
@@ -70,81 +72,152 @@ public class Ui extends Application
         primaryStage.setScene(new Scene(layout, 600, 400));
     }
 
-    // --- Test Suite / Test Case Screen ---
-    private void showTestSuiteScreen()
+    private void showTestSuiteManagementScreen()
     {
-        // Suite creation
-        Label suiteLabel = new Label("Enter Test Suite Title:");
-        TextField suiteField = new TextField();
-        Button createSuiteButton = new Button("Create Test Suite");
+        Coordinator coordinator = this.coordinator; // for convenience
 
-        // Test Case creation
-        Label caseTitleLabel = new Label("Test Case Title:");
-        TextField caseTitleField = new TextField();
-        Label inputLabel = new Label("Input Data:");
-        TextField inputField = new TextField();
-        Label expectedLabel = new Label("Expected Output:");
-        TextField expectedField = new TextField();
-        Button addCaseButton = new Button("Add Test Case");
+        // --- Suite Selection / Creation ---
+        Button createSuiteButton = new Button("Create New Suite");
+        Button selectSuiteButton = new Button("Select Existing Suite");
 
-        // Save / Load buttons
-        Button saveSuiteButton = new Button("Save Test Suite");
-        Button loadSuiteButton = new Button("Load Test Suite");
-
-        // Display added test cases
         ListView<String> testCaseList = new ListView<>();
+        Button addCaseButton = new Button("Add Test Case");
+        Button editCaseButton = new Button("Edit Selected Case");
+        Button removeCaseButton = new Button("Remove Selected Case");
+        Button doneButton = new Button("Done");
 
         VBox layout = new VBox(10,
-                suiteLabel, suiteField, createSuiteButton,
+                createSuiteButton, selectSuiteButton,
                 new Separator(),
-                caseTitleLabel, caseTitleField,
-                inputLabel, inputField,
-                expectedLabel, expectedField,
-                addCaseButton,
+                new Label("Test Cases in Suite:"), testCaseList,
                 new Separator(),
-                new Label("Test Cases:"), testCaseList,
-                new Separator(),
-                saveSuiteButton, loadSuiteButton
+                addCaseButton, editCaseButton, removeCaseButton,
+                doneButton
         );
         layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
-        // --- Button actions ---
+        Scene scene = new Scene(layout, 600, 600);
+
+        // --- Button Actions ---
         createSuiteButton.setOnAction(e -> {
-            String title = suiteField.getText();
-            if (!title.isEmpty())
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Create Test Suite");
+            dialog.setHeaderText(null);
+            dialog.setContentText("Enter Test Suite Title:");
+            dialog.showAndWait().ifPresent(title -> {
+                if (!title.isEmpty())
+                {
+                    coordinator.createTestSuite(title);
+                    testCaseList.getItems().clear();
+                    System.out.println("Test Suite created: " + title);
+                }
+            });
+        });
+
+        selectSuiteButton.setOnAction(e -> {
+            // TODO: implement file chooser to load suite
+            coordinator.loadTestSuite();
+            testCaseList.getItems().clear();
+            if (coordinator.getCurrentTestSuite() != null)
             {
-                coordinator.createTestSuite(title);
-                testCaseList.getItems().clear();
-                System.out.println("Test Suite created: " + title);
+                for (TestCase tc : coordinator.getCurrentTestSuite().getTestCases())
+                {
+                    testCaseList.getItems().add(tc.getTitle());
+                }
             }
         });
 
         addCaseButton.setOnAction(e -> {
-            String title = caseTitleField.getText();
-            String input = inputField.getText();
-            String expected = expectedField.getText();
-            if (!title.isEmpty())
+            TestCase tc = promptTestCase(null);
+            if (tc != null)
             {
-                TestCase testCase = new TestCase(title, input, expected);
-                coordinator.getCurrentTestSuite().addTestCase(testCase);
-                testCaseList.getItems().add(title);
-                System.out.println("Added Test Case: " + title);
+                coordinator.getCurrentTestSuite().addTestCase(tc);
+                testCaseList.getItems().add(tc.getTitle());
             }
         });
 
-        saveSuiteButton.setOnAction(e -> coordinator.saveCurrentTestSuite());
-        loadSuiteButton.setOnAction(e -> {
-            coordinator.loadTestSuite();
-            testCaseList.getItems().clear();
-            for (TestCase tc : coordinator.getCurrentTestSuite().getTestCases())
-                testCaseList.getItems().add(tc.getTitle());
+        editCaseButton.setOnAction(e -> {
+            String selected = testCaseList.getSelectionModel().getSelectedItem();
+            if (selected != null)
+            {
+                TestCase tc = coordinator.getCurrentTestSuite().getTestCases().stream()
+                        .filter(t -> t.getTitle().equals(selected))
+                        .findFirst().orElse(null);
+                if (tc != null)
+                {
+                    TestCase edited = promptTestCase(tc);
+                    if (edited != null)
+                    {
+                        tc.setTitle(edited.getTitle());
+                        tc.setInputData(edited.getInputData());
+                        tc.setExpectedOutput(edited.getExpectedOutput());
+                        testCaseList.getItems().set(testCaseList.getSelectionModel().getSelectedIndex(), edited.getTitle());
+                    }
+                }
+            }
         });
 
-        primaryStage.setScene(new Scene(layout, 600, 600));
-    }
+        removeCaseButton.setOnAction(e -> {
+            String selected = testCaseList.getSelectionModel().getSelectedItem();
+            if (selected != null)
+            {
+                TestCase tc = coordinator.getCurrentTestSuite().getTestCases().stream()
+                        .filter(t -> t.getTitle().equals(selected))
+                        .findFirst().orElse(null);
+                if (tc != null)
+                {
+                    coordinator.getCurrentTestSuite().removeTestCase(tc);
+                    testCaseList.getItems().remove(selected);
+                }
+            }
+        });
 
-    public static void main(String[] args)
-    {
-        launch(args); // clean, no logic here
+        doneButton.setOnAction(e -> {
+            System.out.println("Test Suite finalized: " + coordinator.getCurrentTestSuite().getTitle());
+            // TODO: transition to execution or main menu
+        });
+
+        primaryStage.setScene(scene);
     }
+    
+    private TestCase promptTestCase(TestCase existing)
+    {
+        Dialog<TestCase> dialog = new Dialog<>();
+        dialog.setTitle(existing == null ? "Add Test Case" : "Edit Test Case");
+    
+        // Buttons
+        ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+    
+        // Fields
+        TextField titleField = new TextField();
+        titleField.setPromptText("Title");
+        TextField inputField = new TextField();
+        inputField.setPromptText("Input Data");
+        TextField expectedField = new TextField();
+        expectedField.setPromptText("Expected Output");
+    
+        if (existing != null)
+        {
+            titleField.setText(existing.getTitle());
+            inputField.setText(existing.getInputData());
+            expectedField.setText(existing.getExpectedOutput());
+        }
+    
+        VBox content = new VBox(10, new Label("Title:"), titleField,
+                new Label("Input:"), inputField,
+                new Label("Expected Output:"), expectedField);
+        dialog.getDialogPane().setContent(content);
+    
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == okButtonType)
+            {
+                return new TestCase(titleField.getText(), inputField.getText(), expectedField.getText());
+            }
+            return null;
+        });
+    
+        return dialog.showAndWait().orElse(null);
+    }
+    
 }
