@@ -4,9 +4,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.scene.control.ListView;   // ✔ Correct import
 import java.io.File;
-
-import javax.swing.text.html.ListView;
 
 public class Ui extends Application
 {
@@ -56,19 +55,19 @@ public class Ui extends Application
         VBox layout = new VBox(15, instructionLabel, pathField, browseButton, proceedButton, errorLabel);
         layout.setStyle("-fx-padding: 50; -fx-alignment: center;");
 
-        browseButton.setOnAction(e -> 
+        browseButton.setOnAction(e ->
         {
             DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle("Select Root Folder");
             File selected = chooser.showDialog(primaryStage);
-            if (selected != null) 
+            if (selected != null)
             {
                 pathField.setText(selected.getAbsolutePath());
-                errorLabel.setVisible(false); // clear error if valid
+                errorLabel.setVisible(false);
             }
         });
 
-        proceedButton.setOnAction(e -> 
+        proceedButton.setOnAction(e ->
         {
             String path = pathField.getText();
             if (path != null && !path.isEmpty())
@@ -77,7 +76,7 @@ public class Ui extends Application
                 if (folder.exists() && folder.isDirectory())
                 {
                     coordinator.setRootFolder(path);
-                    showTestSuiteScreen();
+                    showTestSuiteManagementScreen(); // ✔ fixed method name
                 }
                 else
                 {
@@ -95,13 +94,12 @@ public class Ui extends Application
         primaryStage.setScene(new Scene(layout, 600, 400));
     }
 
-
     // --- Test Suite Management Screen ---
     private void showTestSuiteManagementScreen()
     {
         Coordinator coordinator = this.coordinator; // convenience
 
-        // --- Suite Selection / Creation ---
+        // --- Buttons ---
         Button createSuiteButton = new Button("Create New Suite");
         Button selectSuiteButton = new Button("Select Existing Suite");
 
@@ -128,13 +126,13 @@ public class Ui extends Application
         Scene scene = new Scene(layout, 600, 600);
 
         // --- Button Actions ---
-        createSuiteButton.setOnAction(e -> 
+        createSuiteButton.setOnAction(e ->
         {
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Create Test Suite");
             dialog.setHeaderText(null);
             dialog.setContentText("Enter Test Suite Title:");
-            dialog.showAndWait().ifPresent(title -> 
+            dialog.showAndWait().ifPresent(title ->
             {
                 if (!title.isEmpty())
                 {
@@ -145,9 +143,8 @@ public class Ui extends Application
             });
         });
 
-        selectSuiteButton.setOnAction(e -> 
+        selectSuiteButton.setOnAction(e ->
         {
-            // TODO: implement file chooser to load suite
             coordinator.loadTestSuite();
             testCaseList.getItems().clear();
             if (coordinator.getCurrentTestSuite() != null)
@@ -159,7 +156,7 @@ public class Ui extends Application
             }
         });
 
-        addCaseButton.setOnAction(e -> 
+        addCaseButton.setOnAction(e ->
         {
             TestCase tc = promptTestCase(null);
             if (tc != null)
@@ -169,7 +166,7 @@ public class Ui extends Application
             }
         });
 
-        editCaseButton.setOnAction(e -> 
+        editCaseButton.setOnAction(e ->
         {
             String selected = testCaseList.getSelectionModel().getSelectedItem();
             if (selected != null)
@@ -178,6 +175,7 @@ public class Ui extends Application
                         .filter(t -> t.getTitle().equals(selected))
                         .findFirst()
                         .orElse(null);
+
                 if (tc != null)
                 {
                     TestCase edited = promptTestCase(tc);
@@ -192,7 +190,7 @@ public class Ui extends Application
             }
         });
 
-        removeCaseButton.setOnAction(e -> 
+        removeCaseButton.setOnAction(e ->
         {
             String selected = testCaseList.getSelectionModel().getSelectedItem();
             if (selected != null)
@@ -209,10 +207,9 @@ public class Ui extends Application
             }
         });
 
-        doneButton.setOnAction(e -> 
+        doneButton.setOnAction(e ->
         {
             System.out.println("Test Suite finalized: " + coordinator.getCurrentTestSuite().getTitle());
-            // TODO: transition to execution or main menu
         });
 
         primaryStage.setScene(scene);
@@ -248,7 +245,7 @@ public class Ui extends Application
             titleField.setText(existing.getTitle());
             inputField.setText(existing.getInputData());
             expectedField.setText(existing.getExpectedOutput());
-            typeCombo.setValue(existing.getType()); // existing type
+            typeCombo.setValue(existing.getType());
         }
 
         VBox content = new VBox(10,
@@ -259,15 +256,15 @@ public class Ui extends Application
         );
         dialog.getDialogPane().setContent(content);
 
-        dialog.setResultConverter(dialogButton -> 
+        dialog.setResultConverter(dialogButton ->
         {
             if (dialogButton == okButtonType)
             {
                 return new TestCase(
-                    titleField.getText(),
-                    inputField.getText(),
-                    expectedField.getText(),
-                    typeCombo.getValue()
+                        titleField.getText(),
+                        inputField.getText(),
+                        expectedField.getText(),
+                        typeCombo.getValue()
                 );
             }
             return null;
@@ -275,5 +272,4 @@ public class Ui extends Application
 
         return dialog.showAndWait().orElse(null);
     }
-
 }
