@@ -211,4 +211,29 @@ public class Coordinator
         // Implementation will be added in subsequent commits
         return results;
     }
+
+    // Helper method to compile a Java program
+    // Returns true if compilation succeeds, false otherwise
+    private boolean compileProgram(Program program)
+    {
+        try
+        {
+            File sourceFile = program.getSourceFile();
+            File sourceDir = sourceFile.getParentFile();
+            
+            // Build javac command
+            ProcessBuilder pb = new ProcessBuilder("javac", sourceFile.getName());
+            pb.directory(sourceDir);
+            pb.redirectErrorStream(true);
+            
+            Process process = pb.start();
+            int exitCode = process.waitFor();
+            
+            return exitCode == 0;
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+    }
 }
