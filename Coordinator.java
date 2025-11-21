@@ -57,10 +57,9 @@ public class Coordinator
         suite.saveToFile(saveFolder);
     }
 
+    // Method to load a test suite - currently loads the first available suite
     public void loadTestSuite()
     {
-        // TODO: implement file chooser and load
-        // for now just pick the first suite if exists
         if (!listOfTestSuites.getSuites().isEmpty())
         {
             currentTestSuite = listOfTestSuites.getSuites().get(0);

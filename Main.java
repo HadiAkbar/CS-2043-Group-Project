@@ -12,6 +12,15 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         ui = new Ui(stage);  // give the UI class the primary stage
+        
+        // Set minimum window size to prevent resizing issues
+        stage.setMinWidth(800);
+        stage.setMinHeight(600);
+        
+        // Set initial window size
+        stage.setWidth(900);
+        stage.setHeight(700);
+        
         ui.showWelcomeScreen();
 
         stage.setTitle("Submission 3 Tool");
