@@ -9,12 +9,14 @@ public class Coordinator
     private String saveFolder; // For saving test cases and suites
     private ListOfTestSuites listOfTestSuites;
     private ListOfTestCases listOfTestCases; // Global pool of test cases
+    private ListOfPrograms listOfPrograms; // List of student programs to test
     private TestSuite currentTestSuite;
 
     public Coordinator()
     {
         this.listOfTestSuites = new ListOfTestSuites();
         this.listOfTestCases = new ListOfTestCases();
+        this.listOfPrograms = new ListOfPrograms();
         this.currentTestSuite = null;
     }
 
