@@ -192,4 +192,23 @@ public class Coordinator
         }
         return filenames;
     }
+
+    // Method to execute a test suite on all student programs
+    // Loads programs from root folder, compiles and runs each with all test cases
+    // Returns a list of result strings in format "StudentName | TestCaseTitle | Status"
+    public List<String> executeTestSuite(String codePath) throws IOException
+    {
+        if (currentTestSuite == null)
+        {
+            throw new IOException("No test suite selected");
+        }
+        if (rootFolder == null || rootFolder.isEmpty())
+        {
+            throw new IOException("Root folder not set");
+        }
+
+        List<String> results = new ArrayList<>();
+        // Implementation will be added in subsequent commits
+        return results;
+    }
 }
