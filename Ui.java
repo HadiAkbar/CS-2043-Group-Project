@@ -29,8 +29,15 @@ public class Ui
         Label welcomeLabel = new Label("Welcome to Group 3's Submission 3");
         Button startButton = new Button("Start");
 
+        // styling
+        welcomeLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-size: 20px; -fx-font-weight: bold;");
+        startButton.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 20; -fx-font-weight: bold;");
+        startButton.setOnMouseEntered(e -> startButton.setStyle("-fx-background-color: linear-gradient(#7b68ee,#6f6fff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 20; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(111,111,255,0.55), 12,0,0,0);"));
+        startButton.setOnMouseExited(e -> startButton.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 10 20; -fx-font-weight: bold;"));
+
         VBox layout = new VBox(20, welcomeLabel, startButton);
-        layout.setStyle("-fx-padding: 50; -fx-alignment: center;");
+        // background gradient + centering + padding
+        layout.setStyle("-fx-padding: 50; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
 
         Scene scene = new Scene(layout, 800, 600);
         startButton.setOnAction(e -> showFolderSelectionScreen());
@@ -51,11 +58,23 @@ public class Ui
         Button proceedButton = new Button("Proceed");
 
         Label errorLabel = new Label("Please select or enter a valid folder.");
-        errorLabel.setStyle("-fx-text-fill: red;");
+        errorLabel.setStyle("-fx-text-fill: #ff6b6b;");
         errorLabel.setVisible(false);
 
+        // style controls
+        instructionLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-size: 16px; -fx-font-weight: 600;");
+        pathField.setStyle("-fx-background-color: #303046; -fx-text-fill: #E8E8F2; -fx-background-radius: 6; -fx-padding: 6 8;");
+        browseButton.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 14;");
+        proceedButton.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 14;");
+
+        // hover
+        browseButton.setOnMouseEntered(e -> browseButton.setStyle("-fx-background-color: linear-gradient(#7b68ee,#6f6fff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 14; -fx-effect: dropshadow(gaussian, rgba(111,111,255,0.45),10,0,0,0);"));
+        browseButton.setOnMouseExited(e -> browseButton.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 14;"));
+        proceedButton.setOnMouseEntered(e -> proceedButton.setStyle("-fx-background-color: linear-gradient(#7b68ee,#6f6fff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 14; -fx-effect: dropshadow(gaussian, rgba(111,111,255,0.45),10,0,0,0);"));
+        proceedButton.setOnMouseExited(e -> proceedButton.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 14;"));
+
         VBox layout = new VBox(15, instructionLabel, pathField, browseButton, proceedButton, errorLabel);
-        layout.setStyle("-fx-padding: 50; -fx-alignment: center;");
+        layout.setStyle("-fx-padding: 50; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
 
         browseButton.setOnAction(e -> {
             DirectoryChooser chooser = new DirectoryChooser();
@@ -104,20 +123,38 @@ public class Ui
         Coordinator coordinator = this.coordinator;
 
         Label saveFolderLabel = new Label("Save Folder: Not set");
+        saveFolderLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
         Button browseSaveFolderButton = new Button("Browse Save Folder");
         Button createSuiteButton = new Button("Create New Suite");
         Button selectSuiteButton = new Button("Select Existing Suite");
         Button createCaseButton = new Button("Create New Test Case");
         Button manageCasesButton = new Button("Manage Test Cases");
 
+        // style buttons (apply consistent style + hover)
+        Button[] topButtons = {browseSaveFolderButton, createSuiteButton, selectSuiteButton, createCaseButton, manageCasesButton};
+        for (Button b : topButtons) {
+            b.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12;");
+            b.setOnMouseEntered(e -> b.setStyle("-fx-background-color: linear-gradient(#7b68ee,#6f6fff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12; -fx-effect: dropshadow(gaussian, rgba(111,111,255,0.45),10,0,0,0);"));
+            b.setOnMouseExited(e -> b.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12;"));
+        }
+
         ListView<String> testCaseList = new ListView<>();
+        testCaseList.setStyle("-fx-background-color: #262634; -fx-control-inner-background: #262634; -fx-border-color: #3a3a5a; -fx-border-radius: 6; -fx-padding: 6; -fx-text-fill: #E8E8F2;");
         Label suiteLabel = new Label("Selected Suite: None");
+        suiteLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
         Button addCaseButton = new Button("Add Test Case to Suite");
         Button removeCaseButton = new Button("Remove Test Case from Suite");
         Button saveSuiteButton = new Button("Save Suite");
         Button executeSuiteButton = new Button("Execute Test Suite");
         Button backToStartButton = new Button("Back to Start");
         Button doneButton = new Button("Done");
+
+        Button[] otherButtons = {addCaseButton, removeCaseButton, saveSuiteButton, executeSuiteButton, backToStartButton, doneButton};
+        for (Button b : otherButtons) {
+            b.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12;");
+            b.setOnMouseEntered(e -> b.setStyle("-fx-background-color: linear-gradient(#7b68ee,#6f6fff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12; -fx-effect: dropshadow(gaussian, rgba(111,111,255,0.45),10,0,0,0);"));
+            b.setOnMouseExited(e -> b.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12;"));
+        }
 
         VBox layout = new VBox(10,
                 saveFolderLabel,
@@ -142,7 +179,15 @@ public class Ui
                 backToStartButton,
                 doneButton
         );
-        layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+
+        // style labels inside the layout (header & list label)
+        for (javafx.scene.Node node : layout.getChildren()) {
+            if (node instanceof Label) {
+                ((Label) node).setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
+            }
+        }
+
+        layout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
 
         Scene scene = new Scene(layout, 900, 750);
 
@@ -368,10 +413,19 @@ public class Ui
         Coordinator coordinator = this.coordinator;
 
         ListView<String> testCaseList = new ListView<>();
+        testCaseList.setStyle("-fx-background-color: #262634; -fx-control-inner-background: #262634; -fx-border-color: #3a3a5a; -fx-border-radius: 6; -fx-padding: 6; -fx-text-fill: #E8E8F2;");
         Button editCaseButton = new Button("Edit Selected Test Case");
         Button deleteCaseButton = new Button("Delete Selected Test Case");
         Button backButton = new Button("Back");
         Button restartButton = new Button("Restart from Beginning");
+
+        // style buttons
+        Button[] bset = {editCaseButton, deleteCaseButton, backButton, restartButton};
+        for (Button b : bset) {
+            b.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12;");
+            b.setOnMouseEntered(e -> b.setStyle("-fx-background-color: linear-gradient(#7b68ee,#6f6fff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12; -fx-effect: dropshadow(gaussian, rgba(111,111,255,0.45),10,0,0,0);"));
+            b.setOnMouseExited(e -> b.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12;"));
+        }
 
         VBox layout = new VBox(10,
                 new Label("All Test Cases:"),
@@ -382,7 +436,13 @@ public class Ui
                 backButton,
                 restartButton
         );
-        layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        // style labels in this layout
+        for (javafx.scene.Node node : layout.getChildren()) {
+            if (node instanceof Label) {
+                ((Label) node).setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
+            }
+        }
+        layout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
 
         Scene scene = new Scene(layout, 800, 600);
 
@@ -533,6 +593,18 @@ public class Ui
         Button executeButton = new Button("Execute Test Suite");
         Button backButton = new Button("Back");
 
+        // styles
+        rootFolderLabel.setStyle("-fx-text-fill: #E8E8F2;");
+        codePathLabel.setStyle("-fx-text-fill: #E8E8F2;");
+        codePathField.setStyle("-fx-background-color: #303046; -fx-text-fill: #E8E8F2; -fx-background-radius: 6; -fx-padding: 6 8;");
+        executeButton.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 8 14;");
+        executeButton.setOnMouseEntered(e -> executeButton.setStyle("-fx-background-color: linear-gradient(#7b68ee,#6f6fff); -fx-effect: dropshadow(gaussian, rgba(111,111,255,0.45),10,0,0,0);"));
+        executeButton.setOnMouseExited(e -> executeButton.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff);"));
+
+        backButton.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12;");
+        backButton.setOnMouseEntered(e -> backButton.setStyle("-fx-background-color: linear-gradient(#7b68ee,#6f6fff);"));
+        backButton.setOnMouseExited(e -> backButton.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff);"));
+
         VBox layout = new VBox(15,
                 new Label("Execute Test Suite: " + coordinator.getCurrentTestSuite().getTitle()),
                 new Separator(),
@@ -543,7 +615,10 @@ public class Ui
                 executeButton,
                 backButton
         );
-        layout.setStyle("-fx-padding: 30; -fx-alignment: center;");
+        // style header label
+        ((Label) layout.getChildren().get(0)).setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 18;");
+
+        layout.setStyle("-fx-padding: 30; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
 
         Scene scene = new Scene(layout, 800, 500);
 
@@ -573,14 +648,23 @@ public class Ui
         TestSuite suite = coordinator.getCurrentTestSuite();
 
         Label titleLabel = new Label("Test Results for: " + suite.getTitle());
+        titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 18;");
         
         // ListView to show students and their results
         ListView<String> resultsList = new ListView<>();
         resultsList.setPrefHeight(400);
+        resultsList.setStyle("-fx-background-color: #262634; -fx-control-inner-background: #262634; -fx-border-color: #3a3a5a; -fx-border-radius: 6; -fx-padding: 6; -fx-text-fill: #E8E8F2;");
 
         Button viewComparisonButton = new Button("View Comparison (Selected)");
         Button backButton = new Button("Back");
         Button restartButton = new Button("Restart from Beginning");
+
+        Button[] btns = {viewComparisonButton, backButton, restartButton};
+        for (Button b : btns) {
+            b.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12;");
+            b.setOnMouseEntered(e -> b.setStyle("-fx-background-color: linear-gradient(#7b68ee,#6f6fff);"));
+            b.setOnMouseExited(e -> b.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff);"));
+        }
 
         VBox layout = new VBox(10,
                 titleLabel,
@@ -592,7 +676,11 @@ public class Ui
                 backButton,
                 restartButton
         );
-        layout.setStyle("-fx-padding: 20;");
+        // style labels in layout
+        for (javafx.scene.Node node : layout.getChildren()) {
+            if (node instanceof Label) ((Label) node).setStyle("-fx-text-fill: #E8E8F2;");
+        }
+        layout.setStyle("-fx-padding: 20; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
 
         Scene scene = new Scene(layout, 1000, 700);
 
@@ -650,24 +738,36 @@ public class Ui
         Coordinator coordinator = this.coordinator;
 
         Label titleLabel = new Label("Comparison: " + studentName + " - " + testCaseTitle);
+        titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 18;");
 
         TextArea expectedArea = new TextArea();
         expectedArea.setEditable(false);
         expectedArea.setPrefRowCount(15);
         expectedArea.setPrefColumnCount(40);
         expectedArea.setWrapText(true);
+        expectedArea.setStyle("-fx-control-inner-background: #262634; -fx-text-fill: #E8E8F2; -fx-background-radius: 6;");
 
         TextArea actualArea = new TextArea();
         actualArea.setEditable(false);
         actualArea.setPrefRowCount(15);
         actualArea.setPrefColumnCount(40);
         actualArea.setWrapText(true);
+        actualArea.setStyle("-fx-control-inner-background: #262634; -fx-text-fill: #E8E8F2; -fx-background-radius: 6;");
 
         Label expectedLabel = new Label("Expected Output:");
+        expectedLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
         Label actualLabel = new Label("Actual Output:");
+        actualLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
 
         Button backButton = new Button("Back to Results");
         Button restartButton = new Button("Restart from Beginning");
+
+        Button[] smallBtns = {backButton, restartButton};
+        for (Button b : smallBtns) {
+            b.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff); -fx-text-fill: white; -fx-background-radius: 8; -fx-padding: 6 12;");
+            b.setOnMouseEntered(e -> b.setStyle("-fx-background-color: linear-gradient(#7b68ee,#6f6fff);"));
+            b.setOnMouseExited(e -> b.setStyle("-fx-background-color: linear-gradient(#6a5acd,#4c4cff);"));
+        }
 
         HBox comparisonBox = new HBox(20,
                 new VBox(5, expectedLabel, expectedArea),
@@ -683,7 +783,7 @@ public class Ui
                 backButton,
                 restartButton
         );
-        layout.setStyle("-fx-padding: 20;");
+        layout.setStyle("-fx-padding: 20; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
 
         Scene scene = new Scene(layout, 1100, 600);
 
@@ -718,6 +818,10 @@ public class Ui
         TextField inputField = new TextField();
         TextField expectedField = new TextField();
 
+        titleField.setStyle("-fx-background-color: #303046; -fx-text-fill: #E8E8F2; -fx-background-radius: 6;");
+        inputField.setStyle("-fx-background-color: #303046; -fx-text-fill: #E8E8F2; -fx-background-radius: 6;");
+        expectedField.setStyle("-fx-background-color: #303046; -fx-text-fill: #E8E8F2; -fx-background-radius: 6;");
+
         ComboBox<String> typeCombo = new ComboBox<>();
         typeCombo.getItems().addAll("Boolean", "Int", "Double", "String");
 
@@ -735,6 +839,13 @@ public class Ui
                 new Label("Expected Output:"), expectedField,
                 new Label("Type:"), typeCombo
         );
+
+        // style labels inside dialog content
+        for (javafx.scene.Node node : content.getChildren()) {
+            if (node instanceof Label) ((Label) node).setStyle("-fx-text-fill: #E8E8F2;");
+        }
+        content.setStyle("-fx-padding: 10; -fx-background-color: #232334;");
+
         dialog.getDialogPane().setContent(content);
 
         dialog.setResultConverter(button -> {
@@ -753,4 +864,3 @@ public class Ui
         return dialog.showAndWait().orElse(null);
     }
 }
-
