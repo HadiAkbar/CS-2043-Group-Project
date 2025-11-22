@@ -1,3 +1,9 @@
+/***********************************
+ * Group 3 Submission
+ * 
+ * Main Class
+ ***********************************/
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 
