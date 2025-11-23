@@ -114,9 +114,9 @@ public class Ui
     {
         Coordinator coordinator = this.coordinator;
 
-        Label saveFolderLabel = new Label("Save / Selection folder: Not set");
+        Label saveFolderLabel = new Label("Folder containing test-suites/ and test-cases: Not set");
         saveFolderLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
-        Button browseSaveFolderButton = new Button("Browse Save Folder");
+        Button browseSaveFolderButton = new Button("Browse Test Folders");
         Button createSuiteButton = new Button("Create New Suite");
         Button selectSuiteButton = new Button("Select Existing Suite");
         Button createCaseButton = new Button("Create New Test Case");
@@ -176,17 +176,17 @@ public class Ui
 
         Scene scene = new Scene(layout, 1000, 850);
 
-        // Runnable to update the save folder label display
-        // Checks if save folder is set and updates the label text accordingly
+        // Runnable to update the folder label display
+        // Checks if folder is set and updates the label text accordingly
         Runnable updateSaveFolderLabel = () -> {
             String saveFolder = coordinator.getSaveFolder();
             if (saveFolder != null && !saveFolder.isEmpty())
             {
-                saveFolderLabel.setText("Save / Selection folder: " + saveFolder);
+                saveFolderLabel.setText("Folder containing test-suites/ and test-cases: " + saveFolder);
             }
             else
             {
-                saveFolderLabel.setText("Save / Selection folder: Not set");
+                saveFolderLabel.setText("Folder containing test-suites/ and test-cases: Not set");
             }
         };
         updateSaveFolderLabel.run();
@@ -218,11 +218,12 @@ public class Ui
             }
         };
 
-        // Button action: Opens folder browser to select where test cases and suites are saved
+        // Button action: Opens folder browser to select folder for test cases and suites
+        // Folder should contain test-suites/ and test-cases/ subfolders
         // Once selected, loads any existing test cases and suites from that folder
         browseSaveFolderButton.setOnAction(e -> {
             DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle("Select Folder for Test Cases and Suites");
+            chooser.setTitle("Select Folder (contains test-suites/ and test-cases/)");
             File selected = chooser.showDialog(primaryStage);
             if (selected != null)
             {
@@ -254,7 +255,7 @@ public class Ui
             List<TestSuite> suites = coordinator.getAllTestSuites();
             if (suites.isEmpty())
             {
-                showErrorDialog("No Suites Available", "No test suites found. Please create a test suite first or set the save folder.");
+                showErrorDialog("No Suites Available", "No test suites found. Please create a test suite first or set the root folder.");
                 return;
             }
 
@@ -342,7 +343,7 @@ public class Ui
         });
 
         // Button action: Saves the currently selected test suite to a file
-        // Saves the suite with all its test case references to the save folder
+        // Saves the suite with all its test case references to the root folder
         saveSuiteButton.setOnAction(e -> {
             if (coordinator.getCurrentTestSuite() == null)
             {
@@ -371,7 +372,7 @@ public class Ui
             }
             if (coordinator.getRootFolder() == null || coordinator.getRootFolder().isEmpty())
             {
-                showErrorDialog("Root Folder Not Set", "Please set the root folder for student submissions first.");
+                showErrorDialog("Student Submissions Folder Not Set", "Please set the folder containing student submissions first.");
                 return;
             }
             // Check if suite has any test cases
@@ -578,7 +579,7 @@ public class Ui
     {
         Coordinator coordinator = this.coordinator;
 
-        Label rootFolderLabel = new Label("Root Folder: " + 
+        Label rootFolderLabel = new Label("Student Submissions Folder: " + 
             (coordinator.getRootFolder() != null ? coordinator.getRootFolder() : "Not set"));
         TextField codePathField = new TextField();
         codePathField.setPromptText("e.g., src (leave empty if code is directly in submission folder)");
