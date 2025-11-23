@@ -1,4 +1,3 @@
-package ui;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -6,14 +5,9 @@ import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import model.TestCase;
-import model.TestResult;
-import model.TestSuite;
 import javafx.scene.control.ListView;
 import java.io.File;
 import java.util.List;
-
-import controllers.Coordinator;
 
 public class Ui
 {
@@ -181,7 +175,7 @@ public class Ui
 
         layout.setStyle("-fx-padding: 20; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
 
-        Scene scene = new Scene(layout, 1000, 850);
+        Scene scene = new Scene(layout, 1000, 950);
 
         // Runnable to update the folder label display
         // Checks if folder is set and updates the label text accordingly
