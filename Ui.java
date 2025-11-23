@@ -3,6 +3,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.ListView;
 import java.io.File;
@@ -652,10 +653,11 @@ public class Ui
         resultsList.setStyle("-fx-background-color: #262634; -fx-control-inner-background: #262634; -fx-border-color: #3a3a5a; -fx-border-radius: 6; -fx-padding: 6; -fx-text-fill: #E8E8F2;");
 
         Button viewComparisonButton = new Button("View Comparison (Selected)");
+        Button saveAsButton = new Button("Save Results As...");
         Button backButton = new Button("Back");
         Button restartButton = new Button("Restart from Beginning");
 
-        Button[] btns = {viewComparisonButton, backButton, restartButton};
+        Button[] btns = {viewComparisonButton, saveAsButton, backButton, restartButton};
         for (Button b : btns) {
             styleButton(b);
         }
@@ -667,6 +669,7 @@ public class Ui
                 resultsList,
                 new Separator(),
                 viewComparisonButton,
+                saveAsButton,
                 backButton,
                 restartButton
         );
@@ -754,6 +757,37 @@ public class Ui
             }
         });
 
+        // Button action: Saves the test results to a file
+        saveAsButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Test Results As...");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Text Files", "*.txt")
+            );
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+            
+            // Suggest a filename based on suite title and timestamp
+            String suiteTitle = coordinator.getCurrentTestSuite().getTitle();
+            String suggestedFilename = sanitizeFilename(suiteTitle) + "_results.txt";
+            fileChooser.setInitialFileName(suggestedFilename);
+            
+            File file = fileChooser.showSaveDialog(primaryStage);
+            if (file != null)
+            {
+                try
+                {
+                    saveResultsToFile(results, file, suiteTitle);
+                    showInfoDialog("Results Saved", "Test results have been saved to:\n" + file.getAbsolutePath());
+                }
+                catch (Exception ex)
+                {
+                    showErrorDialog("Save Error", "Failed to save results: " + ex.getMessage());
+                }
+            }
+        });
+
         backButton.setOnAction(e -> {
             showExecuteTestSuiteScreen();
         });
@@ -763,6 +797,80 @@ public class Ui
         });
 
         primaryStage.setScene(scene);
+    }
+
+    // Helper method to sanitize a string to be a valid filename
+    private String sanitizeFilename(String name)
+    {
+        return name.replaceAll("[^a-zA-Z0-9._-]", "_");
+    }
+
+    // Helper method to repeat a string (for compatibility with older Java versions)
+    private String repeatString(String str, int count)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < count; i++)
+        {
+            sb.append(str);
+        }
+        return sb.toString();
+    }
+
+    // Method to save test results to a file
+    // Formats results with student names, test cases, and status
+    private void saveResultsToFile(List<TestResult> results, File file, String suiteTitle) throws java.io.IOException
+    {
+        try (java.io.PrintWriter writer = new java.io.PrintWriter(new java.io.FileWriter(file)))
+        {
+            // Write header
+            writer.println("Test Results for: " + suiteTitle);
+            writer.println("Generated: " + new java.util.Date());
+            writer.println(repeatString("=", 80));
+            writer.println();
+            
+            // Group results by student
+            String currentStudent = null;
+            for (TestResult result : results)
+            {
+                String studentName = result.getStudentName();
+                
+                // Add divider when student changes
+                if (currentStudent != null && !currentStudent.equals(studentName))
+                {
+                    writer.println(repeatString("-", 80));
+                }
+                
+                // Write result line
+                if (result.getStatus().startsWith("SKIPPED"))
+                {
+                    writer.println(studentName + " | " + result.getStatus());
+                }
+                else
+                {
+                    writer.println(studentName + " | " + result.getTestCaseTitle() + " | " + result.getStatus());
+                }
+                
+                currentStudent = studentName;
+            }
+            
+            // Write summary
+            writer.println();
+            writer.println(repeatString("=", 80));
+            writer.println("Summary:");
+            int total = results.size();
+            long passed = results.stream().filter(r -> r.getStatus().equals("PASSED")).count();
+            long failed = results.stream().filter(r -> r.getStatus().equals("FAILED")).count();
+            long compileErrors = results.stream().filter(r -> r.getStatus().equals("COMPILE ERROR")).count();
+            long runtimeErrors = results.stream().filter(r -> r.getStatus().equals("RUNTIME ERROR")).count();
+            long skipped = results.stream().filter(r -> r.getStatus().startsWith("SKIPPED")).count();
+            
+            writer.println("Total Results: " + total);
+            writer.println("Passed: " + passed);
+            writer.println("Failed: " + failed);
+            writer.println("Compile Errors: " + compileErrors);
+            writer.println("Runtime Errors: " + runtimeErrors);
+            writer.println("Skipped: " + skipped);
+        }
     }
 
     // Method to display the side-by-side comparison screen
