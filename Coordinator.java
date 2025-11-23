@@ -269,8 +269,8 @@ public class Coordinator
             }
         }
         
-        // Store results for UI retrieval
-        lastExecutionResults = results;
+        // Store results for UI retrieval (create a copy to prevent modification)
+        lastExecutionResults = new ArrayList<>(results);
         
         return results;
     }

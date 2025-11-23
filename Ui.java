@@ -800,7 +800,7 @@ public class Ui
             (result.getStatus().equals("COMPILE ERROR") ? "Compilation failed - no output available" : ""));
 
         backButton.setOnAction(e -> {
-            // Re-display results screen with stored results
+            // Always try to go back to results screen with stored results
             List<TestResult> storedResults = coordinator.getLastExecutionResults();
             if (storedResults != null && !storedResults.isEmpty())
             {
@@ -808,6 +808,8 @@ public class Ui
             }
             else
             {
+                // Fallback: if results aren't available, go to execute screen
+                showErrorDialog("Results Not Available", "Test results are no longer available. Please re-run the test suite.");
                 showExecuteTestSuiteScreen();
             }
         });
