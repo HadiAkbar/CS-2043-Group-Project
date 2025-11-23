@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.FileReader;
 
 public class Program
 {
@@ -9,6 +10,7 @@ public class Program
     private File sourceFile; // The Java source file associated with this program
     private Boolean compilationStatus = null; // null = not tried, true = compiled successfully, false = compilation failed
     private Integer lastExitCode = null; // Exit code from last program execution
+    private String className = null; // Cached class name extracted from source file
 
     // Constructor: initializes a Program object with a name and source file
     // Additional: Used to represent a student's submission in the grading system
@@ -50,6 +52,53 @@ public class Program
         }
     }
 
+    // Extract the class name from the Java source file
+    // Reads the file and finds the public class declaration
+    private String extractClassName()
+    {
+        if (className != null)
+        {
+            return className; // Return cached class name
+        }
+        
+        try
+        {
+            BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+                line = line.trim();
+                // Look for public class declaration
+                if (line.startsWith("public class "))
+                {
+                    // Extract class name (e.g., "public class MyClass {" -> "MyClass")
+                    int start = "public class ".length();
+                    int end = line.indexOf(' ', start);
+                    if (end == -1)
+                    {
+                        end = line.indexOf('{', start);
+                    }
+                    if (end == -1)
+                    {
+                        end = line.length();
+                    }
+                    className = line.substring(start, end).trim();
+                    reader.close();
+                    return className;
+                }
+            }
+            reader.close();
+        }
+        catch (Exception e)
+        {
+            // If extraction fails, fall back to filename
+        }
+        
+        // Fallback: use filename without extension
+        className = sourceFile.getName().replace(".java", "");
+        return className;
+    }
+
     // Run this compiled Java program with input data
     // Returns the program's output as a string
     public String run(String inputData)
@@ -57,10 +106,10 @@ public class Program
         try
         {
             File sourceDir = sourceFile.getParentFile();
-            String className = sourceFile.getName().replace(".java", "");
+            String classNameToRun = extractClassName();
             
             // Build java command
-            ProcessBuilder pb = new ProcessBuilder("java", className);
+            ProcessBuilder pb = new ProcessBuilder("java", classNameToRun);
             pb.directory(sourceDir);
             pb.redirectErrorStream(true);
             
