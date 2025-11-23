@@ -3,6 +3,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Program
 {
@@ -32,22 +36,42 @@ public class Program
     // Returns true if compilation succeeds, false otherwise
     public boolean compile()
     {
+        List<String> cmd = new ArrayList<>();
+        cmd.add("javac");
+        cmd.add(sourceFile.getAbsolutePath()); // Use full file path
+        
+        ProcessBuilder pb = new ProcessBuilder(cmd);
+        pb.redirectErrorStream(true); // Merge stdout & stderr
+        
         try
         {
-            File sourceDir = sourceFile.getParentFile();
+            Process p = pb.start();
             
-            // Build javac command
-            ProcessBuilder pb = new ProcessBuilder("javac", sourceFile.getName());
-            pb.directory(sourceDir);
-            pb.redirectErrorStream(true);
+            // Read combined output (discard for now, but could be logged)
+            try (BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream())))
+            {
+                String line;
+                while ((line = r.readLine()) != null)
+                {
+                    // Compilation errors are captured but not displayed here
+                    // They're indicated by non-zero exit code
+                }
+            }
             
-            Process process = pb.start();
-            int exitCode = process.waitFor();
-            
-            return exitCode == 0;
+            int exit = p.waitFor();
+            if (exit != 0)
+            {
+                return false;
+            }
+            return true;
         }
-        catch (Exception e)
+        catch (IOException e)
         {
+            return false;
+        }
+        catch (InterruptedException e)
+        {
+            Thread.currentThread().interrupt();
             return false;
         }
     }
@@ -106,47 +130,73 @@ public class Program
         try
         {
             File sourceDir = sourceFile.getParentFile();
+            String classPath = sourceDir.getAbsolutePath();
             String classNameToRun = extractClassName();
             
-            // Build java command
-            ProcessBuilder pb = new ProcessBuilder("java", classNameToRun);
-            pb.directory(sourceDir);
-            pb.redirectErrorStream(true);
+            // Build java command with explicit classpath
+            List<String> cmd = new ArrayList<>();
+            cmd.add("java");
+            cmd.add("-cp");
+            cmd.add(classPath);
+            cmd.add(classNameToRun);
+            
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.redirectErrorStream(true); // Merge stdout & stderr
             
             Process process = pb.start();
             
-            // Write input data to process stdin
+            // Write input data to process stdin (UTF-8 encoded)
             if (inputData != null && !inputData.isEmpty())
             {
-                OutputStreamWriter writer = new OutputStreamWriter(process.getOutputStream());
-                writer.write(inputData);
-                writer.flush();
-                writer.close();
+                try (OutputStreamWriter writer = new OutputStreamWriter(
+                        process.getOutputStream(), StandardCharsets.UTF_8))
+                {
+                    writer.write(inputData);
+                    writer.flush();
+                    // Stream will be closed by try-with-resources, signaling EOF
+                }
+                catch (IOException e)
+                {
+                    // If writing fails, allow process to proceed
+                }
+            }
+            else
+            {
+                // If no input, close stdin to avoid child waiting
+                try
+                {
+                    process.getOutputStream().close();
+                }
+                catch (IOException ignored) { }
             }
             
             // Read output from process
-            BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream())
-            );
-            
             StringBuilder output = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null)
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream())))
             {
-                if (output.length() > 0)
+                String line;
+                while ((line = reader.readLine()) != null)
                 {
-                    output.append("\n");
+                    if (output.length() > 0)
+                    {
+                        output.append("\n");
+                    }
+                    output.append(line);
                 }
-                output.append(line);
             }
             
             int exitCode = process.waitFor();
-            reader.close();
             
             // Store exit code for runtime error detection
             lastExitCode = exitCode;
             
             return output.toString();
+        }
+        catch (InterruptedException e)
+        {
+            Thread.currentThread().interrupt();
+            return "ERROR: Execution interrupted";
         }
         catch (Exception e)
         {
