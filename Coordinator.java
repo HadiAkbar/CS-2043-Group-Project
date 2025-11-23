@@ -194,7 +194,7 @@ public class Coordinator
     }
 
     // Method to execute a test suite on all student programs
-    // Loads programs from root folder, compiles and runs each with all test cases
+    // Loads programs from root folder, coordinates execution
     // Returns a list of result strings in format "StudentName | TestCaseTitle | Status"
     public List<String> executeTestSuite(String codePath) throws IOException
     {
@@ -208,32 +208,51 @@ public class Coordinator
         }
 
         List<String> results = new ArrayList<>();
-        // Implementation will be added in subsequent commits
+        
+        // Load all student programs from root folder
+        File rootFolderFile = new File(rootFolder);
+        listOfPrograms.loadFromRootFolder(rootFolderFile, codePath);
+        
+        // Get all test cases in the current suite
+        List<TestCase> testCases = new ArrayList<>();
+        for (String filename : currentTestSuite.getTestCaseFilenames())
+        {
+            TestCase tc = getTestCaseByFilename(filename);
+            if (tc != null)
+            {
+                testCases.add(tc);
+            }
+        }
+        
+        // For each program, test with each test case
+        for (Program program : listOfPrograms.getPrograms())
+        {
+            for (TestCase testCase : testCases)
+            {
+                // Delegate execution to Program class
+                String result = program.executeTestCase(testCase);
+                results.add(result);
+            }
+        }
+        
+        // Store programs and test cases for UI to retrieve outputs later
+        lastExecutionPrograms = new ArrayList<>(listOfPrograms.getPrograms());
+        lastExecutionTestCases = testCases;
+        
         return results;
     }
 
-    // Helper method to compile a Java program
-    // Returns true if compilation succeeds, false otherwise
-    private boolean compileProgram(Program program)
+    // Store last execution data for UI retrieval
+    private List<Program> lastExecutionPrograms = new ArrayList<>();
+    private List<TestCase> lastExecutionTestCases = new ArrayList<>();
+    
+    public List<Program> getLastExecutionPrograms() { return lastExecutionPrograms; }
+    public List<TestCase> getLastExecutionTestCases() { return lastExecutionTestCases; }
+    
+    // Get actual and expected output for a specific student and test case
+    public String[] getOutputsForComparison(String studentName, String testCaseTitle)
     {
-        try
-        {
-            File sourceFile = program.getSourceFile();
-            File sourceDir = sourceFile.getParentFile();
-            
-            // Build javac command
-            ProcessBuilder pb = new ProcessBuilder("javac", sourceFile.getName());
-            pb.directory(sourceDir);
-            pb.redirectErrorStream(true);
-            
-            Process process = pb.start();
-            int exitCode = process.waitFor();
-            
-            return exitCode == 0;
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
+        // TODO: Implement output retrieval
+        return new String[]{"", ""};
     }
 }
