@@ -8,4 +8,6 @@ comment3.params=
 comment3.target=java.util.List\ getPrograms()
 comment4.params=root
 comment4.target=void\ loadFromRootFolder(java.io.File)
-numComments=5
+comment5.params=root\ codePath
+comment5.target=void\ loadFromRootFolder(java.io.File,\ java.lang.String)
+numComments=6

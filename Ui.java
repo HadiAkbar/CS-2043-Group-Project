@@ -39,7 +39,7 @@ public class Ui
         // background gradient + centering + padding
         layout.setStyle("-fx-padding: 50; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
 
-        Scene scene = new Scene(layout, 800, 600);
+        Scene scene = new Scene(layout, 900, 750);
         startButton.setOnAction(e -> showFolderSelectionScreen());
 
         primaryStage.setScene(scene);
@@ -122,7 +122,7 @@ public class Ui
     {
         Coordinator coordinator = this.coordinator;
 
-        Label saveFolderLabel = new Label("Save Folder: Not set");
+        Label saveFolderLabel = new Label("Saving/Selection Folder: Not set");
         saveFolderLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
         Button browseSaveFolderButton = new Button("Browse Save Folder");
         Button createSuiteButton = new Button("Create New Suite");
@@ -197,11 +197,11 @@ public class Ui
             String saveFolder = coordinator.getSaveFolder();
             if (saveFolder != null && !saveFolder.isEmpty())
             {
-                saveFolderLabel.setText("Save Folder: " + saveFolder);
+                saveFolderLabel.setText("Saving/Selection Folder: " + saveFolder);
             }
             else
             {
-                saveFolderLabel.setText("Save Folder: Not set");
+                saveFolderLabel.setText("Saving/Selection Folder: Not set");
             }
         };
         updateSaveFolderLabel.run();
