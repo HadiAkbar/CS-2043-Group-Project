@@ -5,30 +5,26 @@ import java.nio.file.Files;
 
 public class TestSuite
 {
-    private String title;
-    private List<String> testCaseFilenames; // Store references to test case files
+    private String title; // Title of the test suite
+    private List<String> testCaseFilenames; // Stores filenames of test cases included in the suite
 
+    // Constructor: Initializes a TestSuite with a title and empty list of test case filenames
+    // Additional: Prepares suite for adding test cases and saving/loading
     public TestSuite(String title)
     {
         this.title = title;
         this.testCaseFilenames = new ArrayList<>();
     }
 
-    public String getTitle()
-    {
-        return title;
-    }
+    // Getter and setter for suite title
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setTitle(String title)
-    {
-        this.title = title;
-    }
+    // Returns the list of test case filenames
+    public List<String> getTestCaseFilenames() { return testCaseFilenames; }
 
-    public List<String> getTestCaseFilenames()
-    {
-        return testCaseFilenames;
-    }
-
+    // Add a test case filename if not null, empty, or duplicate
+    // Additional: Maintains unique references for each suite
     public void addTestCaseFilename(String filename)
     {
         if (filename != null && !filename.isEmpty() && !testCaseFilenames.contains(filename))
@@ -37,18 +33,20 @@ public class TestSuite
         }
     }
 
+    // Remove a test case filename from the suite
     public void removeTestCaseFilename(String filename)
     {
         testCaseFilenames.remove(filename);
     }
 
-    // Save test suite to a file
+    // Save this test suite to a file in rootFolder/test-suites
+    // Additional: Creates folder if necessary and writes title + list of test case filenames
     public void saveToFile(String rootFolder) throws IOException
     {
         File suitesFolder = new File(rootFolder, "test-suites");
         if (!suitesFolder.exists())
         {
-            suitesFolder.mkdirs();
+            suitesFolder.mkdirs(); // Ensure folder exists
         }
 
         String filename = sanitizeFilename(title) + ".suite";
@@ -56,15 +54,16 @@ public class TestSuite
 
         try (PrintWriter writer = new PrintWriter(new FileWriter(suiteFile)))
         {
-            writer.println(title);
+            writer.println(title); // Write title as first line
             for (String testCaseFilename : testCaseFilenames)
             {
-                writer.println(testCaseFilename);
+                writer.println(testCaseFilename); // Write each test case filename
             }
         }
     }
 
-    // Load test suite from a file
+    // Load a test suite from a file
+    // Additional: Reads title from first line, remaining lines are test case filenames
     public static TestSuite loadFromFile(File suiteFile) throws IOException
     {
         List<String> lines = Files.readAllLines(suiteFile.toPath());
@@ -73,7 +72,7 @@ public class TestSuite
             throw new IOException("Empty test suite file");
         }
 
-        TestSuite suite = new TestSuite(lines.get(0));
+        TestSuite suite = new TestSuite(lines.get(0)); // Title
         for (int i = 1; i < lines.size(); i++)
         {
             String filename = lines.get(i).trim();
@@ -85,6 +84,8 @@ public class TestSuite
         return suite;
     }
 
+    // Helper to sanitize suite title to be a valid filename
+    // Additional: Replaces characters not allowed in filenames with underscore
     private String sanitizeFilename(String name)
     {
         return name.replaceAll("[^a-zA-Z0-9._-]", "_");
