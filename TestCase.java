@@ -3,11 +3,13 @@ import java.nio.file.Files;
 
 public class TestCase
 {
-    private String title;
-    private String inputData;
-    private String expectedOutput;
-    private String type;
+    private String title; // Title of the test case
+    private String inputData; // Input data to provide to the program
+    private String expectedOutput; // Expected output to compare against program output
+    private String type; // Type/category of test case
 
+    // Constructor: Initializes all fields of the test case
+    // Additional: Used to create new test cases programmatically or from files
     public TestCase(String title, String inputData, String expectedOutput, String type)
     {
         this.title = title;
@@ -16,59 +18,34 @@ public class TestCase
         this.type = type;
     }
 
-    public String getTitle()
-    {
-        return title;
-    }
+    // Getter and setter methods for all fields
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setTitle(String title)
-    {
-        this.title = title;
-    }
+    public String getInputData() { return inputData; }
+    public void setInputData(String inputData) { this.inputData = inputData; }
 
-    public String getInputData()
-    {
-        return inputData;
-    }
+    public String getExpectedOutput() { return expectedOutput; }
+    public void setExpectedOutput(String expectedOutput) { this.expectedOutput = expectedOutput; }
 
-    public void setInputData(String inputData)
-    {
-        this.inputData = inputData;
-    }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
 
-    public String getExpectedOutput()
-    {
-        return expectedOutput;
-    }
-
-    public void setExpectedOutput(String expectedOutput)
-    {
-        this.expectedOutput = expectedOutput;
-    }
-
-    public String getType()
-    {
-        return type;
-    }
-
-    public void setType(String type)
-    {
-        this.type = type;
-    }
-
-    // Get the filename for this test case
+    // Get the filename for this test case based on its title
+    // Additional: Sanitizes title to remove invalid characters for filenames
     public String getFilename()
     {
         return sanitizeFilename(title) + ".testcase";
     }
 
-    // Save test case to a file
+    // Save test case to a file under rootFolder/test-cases
+    // Additional: Creates the folder if it does not exist, writes fields in order
     public void saveToFile(String rootFolder) throws IOException
     {
         File testCasesFolder = new File(rootFolder, "test-cases");
         if (!testCasesFolder.exists())
         {
-            testCasesFolder.mkdirs();
+            testCasesFolder.mkdirs(); // Additional: Ensure folder exists
         }
 
         File testCaseFile = new File(testCasesFolder, getFilename());
@@ -83,6 +60,7 @@ public class TestCase
     }
 
     // Load test case from a file
+    // Additional: Reads all lines and expects at least 4 lines in proper order
     public static TestCase loadFromFile(File testCaseFile) throws IOException
     {
         java.util.List<String> lines = Files.readAllLines(testCaseFile.toPath());
@@ -99,6 +77,8 @@ public class TestCase
         );
     }
 
+    // Helper method to sanitize a string to be a valid filename
+    // Additional: Replaces any character not allowed in filenames with underscore
     private String sanitizeFilename(String name)
     {
         return name.replaceAll("[^a-zA-Z0-9._-]", "_");
