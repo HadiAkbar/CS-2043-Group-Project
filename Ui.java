@@ -1,3 +1,4 @@
+package ui;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -5,9 +6,14 @@ import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.TestCase;
+import model.TestResult;
+import model.TestSuite;
 import javafx.scene.control.ListView;
 import java.io.File;
 import java.util.List;
+
+import controllers.Coordinator;
 
 public class Ui
 {

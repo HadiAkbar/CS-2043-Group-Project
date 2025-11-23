@@ -1,8 +1,14 @@
+package controllers;
 // Coordinator class manages test cases, test suites, and student programs
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import model.Program;
+import model.TestCase;
+import model.TestResult;
+import model.TestSuite;
 
 public class Coordinator
 {
