@@ -814,6 +814,12 @@ public class Ui
             actualArea.setText((actualOutput != null && !actualOutput.isEmpty() ? actualOutput : "") + 
                 "\n\n[Program exited with non-zero exit code]");
         }
+        else if (status.startsWith("SKIPPED"))
+        {
+            // For skipped folders, show a clear message
+            actualArea.setText("Folder \"" + result.getStudentName() + "\" didn't contain main method, skipped");
+            expectedArea.setText("N/A - Folder was skipped");
+        }
         else
         {
             actualArea.setText(actualOutput != null ? actualOutput : "");

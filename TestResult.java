@@ -2,7 +2,7 @@ public class TestResult
 {
     private String studentName;
     private String testCaseTitle;
-    private String status; // PASSED, FAILED, COMPILE ERROR, or RUNTIME ERROR
+    private String status; // PASSED, FAILED, COMPILE ERROR, RUNTIME ERROR, or SKIPPED
     private String actualOutput;
     private String expectedOutput;
 
@@ -24,6 +24,11 @@ public class TestResult
     // Format for display in results list
     public String toDisplayString()
     {
+        if (status.startsWith("SKIPPED"))
+        {
+            // For skipped entries, show a clearer message
+            return studentName + " | " + status;
+        }
         return studentName + " | " + testCaseTitle + " | " + status;
     }
 }

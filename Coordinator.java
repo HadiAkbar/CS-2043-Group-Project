@@ -282,6 +282,22 @@ public class Coordinator
             }
         }
         
+        // Add entries for skipped folders (no main method found)
+        List<String> skippedFolders = listOfPrograms.getSkippedFolders();
+        for (String folderName : skippedFolders)
+        {
+            // Create a TestResult entry for each skipped folder
+            // Use a special status to indicate it was skipped
+            TestResult skippedResult = new TestResult(
+                folderName,
+                "N/A",
+                "SKIPPED - NO MAIN METHOD",
+                "",
+                ""
+            );
+            results.add(skippedResult);
+        }
+        
         // Store results for UI retrieval (create a copy to prevent modification)
         lastExecutionResults = new ArrayList<>(results);
         
@@ -308,5 +324,12 @@ public class Coordinator
             }
         }
         return null;
+    }
+
+    // Returns list of folder names that were skipped during program loading (no main method found)
+    // Additional: Useful for informing the user which student submissions couldn't be tested
+    public List<String> getSkippedFolders()
+    {
+        return listOfPrograms.getSkippedFolders();
     }
 }
