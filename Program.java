@@ -7,6 +7,7 @@ public class Program
 {
     private String name; // Name of the student or submission folder
     private File sourceFile; // The Java source file associated with this program
+    private Boolean compilationStatus = null; // null = not tried, true = compiled successfully, false = compilation failed
 
     // Constructor: initializes a Program object with a name and source file
     // Additional: Used to represent a student's submission in the grading system
@@ -100,12 +101,27 @@ public class Program
         }
     }
 
+    // Ensure the program is compiled (only compiles once, reuses compilation status)
+    // Returns true if compilation succeeds or already succeeded, false otherwise
+    public boolean ensureCompiled()
+    {
+        // If we've already tried to compile, return the cached result
+        if (compilationStatus != null)
+        {
+            return compilationStatus;
+        }
+        
+        // Try to compile and cache the result
+        compilationStatus = compile();
+        return compilationStatus;
+    }
+
     // Execute a test case against this program
     // Returns a TestResult object containing execution results
     public TestResult executeTestCase(TestCase testCase)
     {
-        // Try to compile
-        boolean compiled = compile();
+        // Ensure program is compiled (only compiles once)
+        boolean compiled = ensureCompiled();
         
         String expectedOutput = testCase.getExpectedOutput();
         String actualOutput = "";
