@@ -149,6 +149,29 @@ public class Coordinator
                 .orElse(null);
     }
 
+    // Helper method to find a folder by name case-insensitively
+    // Returns the actual folder File if found, or null if not found
+    private File findFolderCaseInsensitive(File parentFolder, String folderName)
+    {
+        if (parentFolder == null || !parentFolder.exists() || !parentFolder.isDirectory())
+        {
+            return null;
+        }
+        
+        File[] files = parentFolder.listFiles(File::isDirectory);
+        if (files != null)
+        {
+            for (File file : files)
+            {
+                if (file.getName().equalsIgnoreCase(folderName))
+                {
+                    return file;
+                }
+            }
+        }
+        return null;
+    }
+
     // Loads all .testcase files from the test-cases folder
     /* Additional: Scans saved test-case folder and loads all .testcase files into memory. */
     private void loadTestCasesFromFolder()
@@ -158,8 +181,9 @@ public class Coordinator
             return;
         }
 
-        File testCasesFolder = new File(saveFolder, "test-cases");
-        if (!testCasesFolder.exists() || !testCasesFolder.isDirectory())
+        File saveFolderFile = new File(saveFolder);
+        File testCasesFolder = findFolderCaseInsensitive(saveFolderFile, "test-cases");
+        if (testCasesFolder == null || !testCasesFolder.exists() || !testCasesFolder.isDirectory())
         {
             return;
         }
@@ -191,8 +215,9 @@ public class Coordinator
             return;
         }
 
-        File suitesFolder = new File(saveFolder, "test-suites");
-        if (!suitesFolder.exists() || !suitesFolder.isDirectory())
+        File saveFolderFile = new File(saveFolder);
+        File suitesFolder = findFolderCaseInsensitive(saveFolderFile, "test-suites");
+        if (suitesFolder == null || !suitesFolder.exists() || !suitesFolder.isDirectory())
         {
             return;
         }
@@ -243,9 +268,13 @@ public class Coordinator
 
         List<TestResult> results = new ArrayList<>();
         
-        // Load all student programs from root folder/programs/ subfolder
+        // Load all student programs from root folder/programs/ subfolder (case-insensitive)
         File rootFolderFile = new File(rootFolder);
-        File programsFolder = new File(rootFolderFile, "programs");
+        File programsFolder = findFolderCaseInsensitive(rootFolderFile, "programs");
+        if (programsFolder == null)
+        {
+            throw new IOException("No 'programs' folder found in root folder. Please check that the root folder contains a 'programs' subfolder (case-insensitive) with student submission folders.");
+        }
         listOfPrograms.loadFromRootFolder(programsFolder, codePath);
         
         // Check if any programs were found
