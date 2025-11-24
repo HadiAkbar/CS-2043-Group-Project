@@ -1,23 +1,52 @@
-Author; Christian Dennis
+# Group 3 Submission 3 Workflow
 
-Group 3 Submission 3 explanation/work flow
+**Author:** Christian Dennis
 
-Assuming we already have all of the programs downloaded as sub folders under a root folder somewhere
+## Before You Start
+- Ensure you already downloaded every student program as its own subfolder inside a single root directory.
+- Have the path to that root directory ready (copy/paste works best).
 
-The program will open up by asking you to please enter the file path to that root folder or use the browse mechanism and find it that way, if you enter a non valid path or nothing it will not let you proceed.
+## Step 1 – Choose the Student Submissions Folder
+1. Launch the tool and either type or browse to the root folder containing all student subfolders.
+2. Invalid or empty paths are rejected, so you must provide a valid location before continuing.
 
-Next it will bring you to the test case/suite management screen, there you will select the root folder that contains your test case and/or test suite folder that you'd like to use previouslt saved cases or suites from, this also works as where you save newly created suites and cases so if you have no created ones to use or you want to make a new one they will be saved here.
+## Step 2 – Manage Test Cases and Test Suites
+1. You land on the **Test Case / Suite Management** screen.
+2. Pick the folder that contains (or will contain) your `test-cases/` and `test-suites/` directories.  
+   - This path is used both for loading existing assets and saving anything new you create.
+3. Create a suite or select an existing one:
+   - When selecting, the tool scans the chosen folder for suite files and lists them.
+   - When creating, click **Create New Suite**, give it a title, and it will be saved in the selected location.
 
-After selecting the root folder for testing you will either create a suite or select one (it will check for a test suite folder in that directory and show the files within it, if it exists. If you're creating then you'll just press create new then enter a title for the new suite.
+### Working With Test Cases
+- To build out a suite, either:
+  - Add previously saved cases, or
+  - Create brand-new ones (provide input, expected output, and type).
+- New cases are saved under the `test-cases/` folder.
+- Use **Add Test Case to Suite** to populate the active suite; the dropdown shows every case file found.
+- Remove a case by selecting it in the suite list and clicking **Remove**.
+- Need to edit/delete a case globally? Choose **Manage Test Cases**, pick the case, then **Modify** or **Delete**.  
+  Changes here apply everywhere that case is used.
 
-Now that you have a suite selected you'll either execute right away if you have all the cases already in it that you want, or if it's a newly created suite you can add pre existing cases OR make new cases to fit that new type of suite/testing. Once you make a new case giving input expected output and type when finish it will be saved to test cases folder, you must then press add test case to suite and it will read your test cases folder and give you a drop down of all the possible files you could add, you could also remove a test case from the suite by clicking on it (it will appear highlighted) then pressing remove. If you want to delete or modify a test case's file in general not just from a suite you'll have to press manage test cases and then select the test case and either click delete to delete from all suites or modify to modify its values in all suites. 
+## Step 3 – Execute the Suite
+1. When the suite looks good, press **Execute Test Suite**.
+2. The app prompts for the path or nested folder structure that holds each student's code.  
+   - Leave it blank if each submission's `Main`/entry point sits directly in the student's folder.
+3. Start execution again from that screen to run all students through the selected suite.
 
-Once all of the testing areas are settled you will click execute suite button which will then bring you to a screen where you can specify the structure / path to the code within each subfolder, if all of the code is just at the root then you can simply leave it blank as it indicates and press execute test suite once again.
+## Step 4 – Review Results
+- Results appear as rows using the format  
+  `FolderName/StudentName | TestCaseName | Status`
+  - Example: `Christian | Add Zero | FAIL`
+- Highlight a row and click **View Comparison** to open a side-by-side view:
+  - Left: expected output
+  - Right: actual output
+  - Works for every student/case combination.
 
-Now you should be at the results screen they will be formatted like "FolderName/StudentName | testCaseName | Status" 
-so; Christian | add zero | FAIL or Christian | add zero | PASSED or Christian | add zero | RUNTIME ERROR and so on...
+## Step 5 – Save the Results (Optional)
+- Use **Save As** to export the current results to a `.txt` file anywhere you like.
+- The saved report groups entries by student, notes which suite was executed, and ends with a short summary.
 
-if you want to inspect how it went wrong you can press on the result row (it will appear highlighted) then press view comparison, this will show you a side by side of the EXPECTED output of the test case we are looking at on the left and the ACTUAL received output of the test case on the right, you can look at the comparison for all sub folders and all cases.
+---
 
-After you're done with the results you can save them as a text file anywhere you'd like using our "Save As" feature it will just format the results still keeping them divided with a little summary at the bottom.
-
+This Markdown version mirrors the original workflow description but is formatted for quick scanning and easier sharing.
