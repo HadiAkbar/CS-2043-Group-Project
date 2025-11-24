@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
+/* Represents an external Java program submission.
+* This class is responsible for compiling and running the external source file
+* and managing the results (exit code, output, compilation status).*/
 public class Program
 {
     private String name; // Name of the student or submission folder
@@ -31,7 +33,9 @@ public class Program
     // Returns the Java source file
     // Additional: Needed for compiling or executing the student's program
     public File getSourceFile() { return sourceFile; }
-
+    
+    //Attempts to compile the source file using the 'javac' command.
+    //The compilation is run as a separate external process.
     // Compile this Java program
     // Returns true if compilation succeeds, false otherwise
     public boolean compile()
@@ -66,16 +70,18 @@ public class Program
             return true;
         }
         catch (IOException e)
-        {
+        {    // Failed to start javac process (e.g., 'javac' command not found on system path)
             return false;
         }
         catch (InterruptedException e)
-        {
+        {    // Current thread was interrupted while waiting for the process to finish
             Thread.currentThread().interrupt();
             return false;
         }
     }
-
+    
+    //Extracts the main public class name from the source file content.
+    //This is required to properly execute the program using 'java <className>'.
     // Extract the class name from the Java source file
     // Reads the file and finds the public class declaration
     private String extractClassName()
@@ -114,15 +120,17 @@ public class Program
             reader.close();
         }
         catch (Exception e)
-        {
-            // If extraction fails, fall back to filename
+        {   // Handle exceptions during file reading or string manipulation]
+            // If extraction fails, fall back to filename
         }
         
         // Fallback: use filename without extension
         className = sourceFile.getName().replace(".java", "");
         return className;
     }
-
+    
+    //Executes the compiled Java class file with the provided input data.
+    //It pipes inputData to stdin and captures all output from stdout/stderr.
     // Run this compiled Java program with input data
     // Returns the program's output as a string
     public String run(String inputData)
@@ -131,6 +139,7 @@ public class Program
         {
             File sourceDir = sourceFile.getParentFile();
             String classPath = sourceDir.getAbsolutePath();
+            // The class files (.class) are assumed to be in the same directory as the .java source.
             String classNameToRun = extractClassName();
             
             // Build java command with explicit classpath
@@ -147,7 +156,7 @@ public class Program
             
             // Write input data to process stdin (UTF-8 encoded)
             if (inputData != null && !inputData.isEmpty())
-            {
+            {    // Use try-with-resources to ensure the OutputStreamWriter is closed.
                 try (OutputStreamWriter writer = new OutputStreamWriter(
                         process.getOutputStream(), StandardCharsets.UTF_8))
                 {
@@ -196,10 +205,11 @@ public class Program
         catch (InterruptedException e)
         {
             Thread.currentThread().interrupt();
+            // Indicates the grading system thread was terminated while waiting for the program.
             return "ERROR: Execution interrupted";
         }
         catch (Exception e)
-        {
+        {    // Catch-all for IO or process-related errors.
             return "ERROR: " + e.getMessage();
         }
     }
@@ -219,6 +229,8 @@ public class Program
         return compilationStatus;
     }
 
+    //Executes a single test case against the compiled program.
+    //Handles compilation status, runtime errors, and output comparison.
     // Execute a test case against this program
     // Returns a TestResult object containing execution results
     public TestResult executeTestCase(TestCase testCase)
@@ -255,6 +267,8 @@ public class Program
         return new TestResult(name, testCase.getTitle(), status, actualOutput, expectedOutput);
     }
 
+    //Compares the actual output string against the expected output based on the specified data type.
+    //The comparison logic is crucial for robust test case validation.
     // Helper method to compare actual output with expected output
     // Handles different types (Boolean, Int, Double, String) appropriately
     private boolean compareOutputs(String actual, String expected, String type)
