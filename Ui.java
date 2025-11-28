@@ -123,10 +123,9 @@ public class Ui
         Button testManagerButton = new Button("Test Manager");
         Button resultsManagerButton = new Button("Results Manager");
         Button executeButton = new Button("Execute Test Suite");
-        Button changeFolderButton = new Button("Change Root Folder");
-        Button backToStartButton = new Button("Back to Start");
+        Button changeFolderButton = new Button("Change Root Folder / Back to Start");
 
-        Button[] btns = {testManagerButton, resultsManagerButton, executeButton, changeFolderButton, backToStartButton};
+        Button[] btns = {testManagerButton, resultsManagerButton, executeButton, changeFolderButton};
         for (Button b : btns) {
             styleButton(b, "10 20");
         }
@@ -140,8 +139,7 @@ public class Ui
                 resultsManagerButton,
                 executeButton,
                 new Separator(),
-                changeFolderButton,
-                backToStartButton
+                changeFolderButton
         );
 
         layout.setStyle("-fx-padding: 50; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
@@ -172,10 +170,6 @@ public class Ui
 
         changeFolderButton.setOnAction(e -> {
             showFolderSelectionScreen();
-        });
-
-        backToStartButton.setOnAction(e -> {
-            showWelcomeScreen();
         });
 
         primaryStage.setScene(scene);
