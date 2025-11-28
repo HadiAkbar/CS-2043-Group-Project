@@ -137,8 +137,9 @@ public class Ui
         Button removeCaseButton = new Button("Remove Test Case from Suite");
         Button saveSuiteButton = new Button("Save Suite");
         Button executeSuiteButton = new Button("Execute Test Suite");
+        Button loadResultsButton = new Button("Load Saved Results");
         Button backToStartButton = new Button("Back to Start");
-        Button[] otherButtons = {addCaseButton, removeCaseButton, saveSuiteButton, executeSuiteButton, backToStartButton};
+        Button[] otherButtons = {addCaseButton, removeCaseButton, saveSuiteButton, executeSuiteButton, loadResultsButton, backToStartButton};
         for (Button b : otherButtons) {
             styleButton(b);
         }
@@ -163,6 +164,7 @@ public class Ui
                 saveSuiteButton,
                 new Separator(),
                 executeSuiteButton,
+                loadResultsButton,
                 backToStartButton
         );
 
@@ -383,6 +385,32 @@ public class Ui
                 return;
             }
             showExecuteTestSuiteScreen();
+        });
+
+        // Button action: Loads and visualizes saved test results from a serialized file
+        loadResultsButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load Saved Test Results");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Serialized Files", "*.ser")
+            );
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+            
+            File file = fileChooser.showOpenDialog(primaryStage);
+            if (file != null)
+            {
+                try
+                {
+                    TestExecutionResults executionResults = coordinator.loadTestExecutionResults(file);
+                    showLoadedResultsScreen(executionResults);
+                }
+                catch (Exception ex)
+                {
+                    showErrorDialog("Load Error", "Failed to load results: " + ex.getMessage());
+                }
+            }
         });
 
         backToStartButton.setOnAction(e -> {
@@ -838,6 +866,118 @@ public class Ui
             showWelcomeScreen();
         });
 
+        primaryStage.setScene(scene);
+    }
+
+    // Method to display loaded test results in a simple text-based interface
+    // Shows results in a non-modifiable text box as specified in feature 3
+    private void showLoadedResultsScreen(TestExecutionResults executionResults)
+    {
+        Label titleLabel = new Label("Loaded Test Results: " + executionResults.getTestSuiteTitle());
+        titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 18;");
+        
+        // Non-modifiable text area to display results
+        TextArea resultsArea = new TextArea();
+        resultsArea.setEditable(false);
+        resultsArea.setWrapText(true);
+        resultsArea.setPrefRowCount(25);
+        resultsArea.setPrefColumnCount(80);
+        resultsArea.setStyle("-fx-control-inner-background: #262634; -fx-text-fill: #E8E8F2; -fx-background-radius: 6; -fx-font-family: 'Courier New', monospace;");
+        
+        // Build the text content
+        StringBuilder content = new StringBuilder();
+        content.append("Test Suite: ").append(executionResults.getTestSuiteTitle()).append("\n");
+        content.append("Root Folder: ").append(executionResults.getRootFolderPath()).append("\n");
+        content.append("Code Path: ").append(executionResults.getCodePath().isEmpty() ? "(root)" : executionResults.getCodePath()).append("\n");
+        content.append("Total Test Cases: ").append(executionResults.getTotalTestCases()).append("\n");
+        content.append("\n");
+        content.append(repeatString("=", 80)).append("\n");
+        content.append("\n");
+        
+        // Group results by student
+        String currentStudent = null;
+        for (TestResult result : executionResults.getResults())
+        {
+            String studentName = result.getStudentName();
+            
+            // Add divider when student changes
+            if (currentStudent != null && !currentStudent.equals(studentName))
+            {
+                content.append(repeatString("-", 80)).append("\n");
+            }
+            
+            // Write result line
+            if (result.getStatus().startsWith("SKIPPED"))
+            {
+                content.append(studentName).append(" | ").append(result.getStatus()).append("\n");
+            }
+            else
+            {
+                content.append(studentName).append(" | ").append(result.getTestCaseTitle())
+                       .append(" | ").append(result.getStatus()).append("\n");
+            }
+            
+            currentStudent = studentName;
+        }
+        
+        // Add summary
+        content.append("\n");
+        content.append(repeatString("=", 80)).append("\n");
+        content.append("Summary:\n");
+        List<TestResult> results = executionResults.getResults();
+        int total = results.size();
+        long passed = results.stream().filter(r -> r.getStatus().equals("PASSED")).count();
+        long failed = results.stream().filter(r -> r.getStatus().equals("FAILED")).count();
+        long compileErrors = results.stream().filter(r -> r.getStatus().equals("COMPILE ERROR")).count();
+        long runtimeErrors = results.stream().filter(r -> r.getStatus().equals("RUNTIME ERROR")).count();
+        long skipped = results.stream().filter(r -> r.getStatus().startsWith("SKIPPED")).count();
+        
+        content.append("Total Results: ").append(total).append("\n");
+        content.append("Passed: ").append(passed).append("\n");
+        content.append("Failed: ").append(failed).append("\n");
+        content.append("Compile Errors: ").append(compileErrors).append("\n");
+        content.append("Runtime Errors: ").append(runtimeErrors).append("\n");
+        content.append("Skipped: ").append(skipped).append("\n");
+        
+        resultsArea.setText(content.toString());
+        
+        Button backButton = new Button("Back");
+        Button restartButton = new Button("Restart from Beginning");
+        
+        Button[] btns = {backButton, restartButton};
+        for (Button b : btns) {
+            styleButton(b);
+        }
+        
+        VBox layout = new VBox(10,
+                titleLabel,
+                new Separator(),
+                new Label("Results:"),
+                resultsArea,
+                new Separator(),
+                backButton,
+                restartButton
+        );
+        
+        // Style labels
+        for (javafx.scene.Node node : layout.getChildren()) {
+            if (node instanceof Label) {
+                ((Label) node).setStyle("-fx-text-fill: #E8E8F2;");
+            }
+        }
+        
+        layout.setStyle("-fx-padding: 20; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
+        
+        Scene scene = new Scene(layout, 1000, 750);
+        
+        backButton.setOnAction(e -> {
+            showTestSuiteManagementScreen();
+        });
+        
+        restartButton.setOnAction(e -> {
+            showWelcomeScreen();
+        });
+        
         primaryStage.setScene(scene);
     }
 
