@@ -1,6 +1,10 @@
 // Coordinator class manages test cases, test suites, and student programs
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -329,16 +333,30 @@ public class Coordinator
         
         // Store results for UI retrieval (create a copy to prevent modification)
         lastExecutionResults = new ArrayList<>(results);
+        lastExecutionCodePath = codePath != null ? codePath : "";
+        lastExecutionRootFolder = rootFolder;
         
         return results;
     }
 
     // Store last execution results for UI retrieval
     private List<TestResult> lastExecutionResults = new ArrayList<>();
+    private String lastExecutionCodePath = "";
+    private String lastExecutionRootFolder = "";
     
     public List<TestResult> getLastExecutionResults()
     {
         return lastExecutionResults;
+    }
+    
+    public String getLastExecutionCodePath()
+    {
+        return lastExecutionCodePath;
+    }
+    
+    public String getLastExecutionRootFolder()
+    {
+        return lastExecutionRootFolder;
     }
     
     // Get a specific test result by student name and test case title
@@ -360,5 +378,25 @@ public class Coordinator
     public List<String> getSkippedFolders()
     {
         return listOfPrograms.getSkippedFolders();
+    }
+    
+    // Saves test execution results to a file using object serialization
+    // Additional: Allows results to be stored and reloaded later for comparison
+    public void saveTestExecutionResults(TestExecutionResults results, File file) throws IOException
+    {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file)))
+        {
+            oos.writeObject(results);
+        }
+    }
+    
+    // Loads test execution results from a file using object deserialization
+    // Additional: Restores previously saved test results for viewing or comparison
+    public TestExecutionResults loadTestExecutionResults(File file) throws IOException, ClassNotFoundException
+    {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file)))
+        {
+            return (TestExecutionResults) ois.readObject();
+        }
     }
 }

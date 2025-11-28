@@ -653,11 +653,12 @@ public class Ui
         resultsList.setStyle("-fx-background-color: #262634; -fx-control-inner-background: #262634; -fx-border-color: #3a3a5a; -fx-border-radius: 6; -fx-padding: 6; -fx-text-fill: #E8E8F2;");
 
         Button viewComparisonButton = new Button("View Comparison (Selected)");
-        Button saveAsButton = new Button("Save Results As...");
+        Button saveAsButton = new Button("Save Results As... (Text)");
+        Button saveSerializedButton = new Button("Save Results (Serialized)");
         Button backButton = new Button("Back");
         Button restartButton = new Button("Restart from Beginning");
 
-        Button[] btns = {viewComparisonButton, saveAsButton, backButton, restartButton};
+        Button[] btns = {viewComparisonButton, saveAsButton, saveSerializedButton, backButton, restartButton};
         for (Button b : btns) {
             styleButton(b);
         }
@@ -670,6 +671,7 @@ public class Ui
                 new Separator(),
                 viewComparisonButton,
                 saveAsButton,
+                saveSerializedButton,
                 backButton,
                 restartButton
         );
@@ -757,7 +759,7 @@ public class Ui
             }
         });
 
-        // Button action: Saves the test results to a file
+        // Button action: Saves the test results to a text file
         saveAsButton.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Test Results As...");
@@ -780,6 +782,46 @@ public class Ui
                 {
                     saveResultsToFile(results, file, suiteTitle);
                     showInfoDialog("Results Saved", "Test results have been saved to:\n" + file.getAbsolutePath());
+                }
+                catch (Exception ex)
+                {
+                    showErrorDialog("Save Error", "Failed to save results: " + ex.getMessage());
+                }
+            }
+        });
+        
+        // Button action: Saves the test results as a serialized object
+        saveSerializedButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Test Results (Serialized)");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Serialized Files", "*.ser")
+            );
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+            
+            // Suggest a filename based on suite title
+            String suiteTitle = coordinator.getCurrentTestSuite().getTitle();
+            String suggestedFilename = sanitizeFilename(suiteTitle) + "_results.ser";
+            fileChooser.setInitialFileName(suggestedFilename);
+            
+            File file = fileChooser.showSaveDialog(primaryStage);
+            if (file != null)
+            {
+                try
+                {
+                    // Create TestExecutionResults object with all metadata
+                    TestExecutionResults executionResults = new TestExecutionResults(
+                        suiteTitle,
+                        coordinator.getLastExecutionRootFolder(),
+                        coordinator.getLastExecutionCodePath(),
+                        results
+                    );
+                    
+                    // Save using serialization
+                    coordinator.saveTestExecutionResults(executionResults, file);
+                    showInfoDialog("Results Saved", "Test results have been saved (serialized) to:\n" + file.getAbsolutePath());
                 }
                 catch (Exception ex)
                 {

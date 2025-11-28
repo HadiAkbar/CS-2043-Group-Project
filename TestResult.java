@@ -1,5 +1,9 @@
-public class TestResult
+import java.io.Serializable;
+
+public class TestResult implements Serializable
 {
+    private static final long serialVersionUID = 1L;
+    
     private String studentName;
     private String testCaseTitle;
     private String status; // PASSED, FAILED, COMPILE ERROR, RUNTIME ERROR, or SKIPPED
