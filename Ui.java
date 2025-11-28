@@ -734,6 +734,10 @@ public class Ui
             styleButton(b);
         }
 
+        // Put save buttons in same row
+        HBox saveButtonsBox = new HBox(10, saveAsButton, saveSerializedButton);
+        saveButtonsBox.setStyle("-fx-alignment: center;");
+        
         VBox layout = new VBox(10,
                 titleLabel,
                 new Separator(),
@@ -741,8 +745,7 @@ public class Ui
                 resultsList,
                 new Separator(),
                 viewComparisonButton,
-                saveAsButton,
-                saveSerializedButton,
+                saveButtonsBox,
                 backButton,
                 restartButton
         );
@@ -1203,8 +1206,7 @@ public class Ui
             }
             
             // Calculate success rate as fraction: passed / total test cases in suite
-            // Use totalTestCases from the suite (as per requirement: "number of test cases passed 
-            // divided by the total number of test cases in the test suite")
+            // Use totalTestCases from the suite (as per requirement)
             rates.put(studentName, passed + "/" + totalTestCases);
         }
         

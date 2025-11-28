@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.target=TestExecutionResults
+comment0.text=\r\n\ Class\ to\ store\ test\ execution\ results\ for\ serialization\r\n\ Contains\ all\ test\ results\ along\ with\ metadata\ about\ the\ execution\r\n
+comment1.params=testSuiteTitle\ rootFolderPath\ codePath\ results
+comment1.target=TestExecutionResults(java.lang.String,\ java.lang.String,\ java.lang.String,\ java.util.List)
+comment2.params=
+comment2.target=java.lang.String\ getTestSuiteTitle()
+comment3.params=
+comment3.target=java.lang.String\ getRootFolderPath()
+comment4.params=
+comment4.target=java.lang.String\ getCodePath()
+comment5.params=
+comment5.target=java.util.List\ getResults()
+comment6.params=
+comment6.target=int\ getTotalTestCases()
+numComments=7
