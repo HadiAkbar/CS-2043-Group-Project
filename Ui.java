@@ -88,7 +88,7 @@ public class Ui
                 if (folder.exists() && folder.isDirectory())
                 {
                     coordinator.setRootFolder(path);
-                    showTestSuiteManagementScreen();
+                    showMainMenuScreen();
                 }
                 else
                 {
@@ -104,6 +104,80 @@ public class Ui
         });
 
         Scene scene = new Scene(layout, 800, 500);
+        primaryStage.setScene(scene);
+    }
+
+    // Method to display the main menu screen
+    // Provides navigation to Test Manager, Results Manager, and Execute
+    public void showMainMenuScreen()
+    {
+        Coordinator coordinator = this.coordinator;
+
+        Label titleLabel = new Label("Main Menu");
+        titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 24px;");
+        
+        Label rootFolderLabel = new Label("Student Submissions Folder: " + 
+            (coordinator.getRootFolder() != null ? coordinator.getRootFolder() : "Not set"));
+        rootFolderLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-size: 14px;");
+        
+        Button testManagerButton = new Button("Test Manager");
+        Button resultsManagerButton = new Button("Results Manager");
+        Button executeButton = new Button("Execute Test Suite");
+        Button changeFolderButton = new Button("Change Root Folder");
+        Button backToStartButton = new Button("Back to Start");
+
+        Button[] btns = {testManagerButton, resultsManagerButton, executeButton, changeFolderButton, backToStartButton};
+        for (Button b : btns) {
+            styleButton(b, "10 20");
+        }
+
+        VBox layout = new VBox(20,
+                titleLabel,
+                new Separator(),
+                rootFolderLabel,
+                new Separator(),
+                testManagerButton,
+                resultsManagerButton,
+                executeButton,
+                new Separator(),
+                changeFolderButton,
+                backToStartButton
+        );
+
+        layout.setStyle("-fx-padding: 50; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
+
+        Scene scene = new Scene(layout, 800, 600);
+
+        testManagerButton.setOnAction(e -> {
+            showTestSuiteManagementScreen();
+        });
+
+        resultsManagerButton.setOnAction(e -> {
+            showResultsManagementScreen();
+        });
+
+        executeButton.setOnAction(e -> {
+            if (coordinator.getCurrentTestSuite() == null)
+            {
+                showErrorDialog("No Suite Selected", "Please select a test suite first. Go to Test Manager to create or select a suite.");
+                return;
+            }
+            if (coordinator.getCurrentTestSuite().getTestCaseFilenames().isEmpty())
+            {
+                showErrorDialog("Empty Test Suite", "The selected test suite has no test cases. Please add test cases to the suite in Test Manager.");
+                return;
+            }
+            showExecuteTestSuiteScreen();
+        });
+
+        changeFolderButton.setOnAction(e -> {
+            showFolderSelectionScreen();
+        });
+
+        backToStartButton.setOnAction(e -> {
+            showWelcomeScreen();
+        });
+
         primaryStage.setScene(scene);
     }
 
@@ -136,11 +210,8 @@ public class Ui
         Button addCaseButton = new Button("Add Test Case to Suite");
         Button removeCaseButton = new Button("Remove Test Case from Suite");
         Button saveSuiteButton = new Button("Save Suite");
-        Button executeSuiteButton = new Button("Execute Test Suite");
-        Button loadResultsButton = new Button("Load Saved Results");
-        Button compareResultsButton = new Button("Compare Two Result Files");
-        Button backToStartButton = new Button("Back to Start");
-        Button[] otherButtons = {addCaseButton, removeCaseButton, saveSuiteButton, executeSuiteButton, loadResultsButton, compareResultsButton, backToStartButton};
+        Button backToMainButton = new Button("Back to Main Menu");
+        Button[] otherButtons = {addCaseButton, removeCaseButton, saveSuiteButton, backToMainButton};
         for (Button b : otherButtons) {
             styleButton(b);
         }
@@ -164,10 +235,7 @@ public class Ui
                 removeCaseButton,
                 saveSuiteButton,
                 new Separator(),
-                executeSuiteButton,
-                loadResultsButton,
-                compareResultsButton,
-                backToStartButton
+                backToMainButton
         );
 
         // style labels inside the layout (header & list label)
@@ -367,27 +435,45 @@ public class Ui
             }
         });
 
-        // Button action: Navigates to the test suite execution screen
-        // Validates that a suite is selected and root folder is set before proceeding
-        executeSuiteButton.setOnAction(e -> {
-            if (coordinator.getCurrentTestSuite() == null)
-            {
-                showErrorDialog("No Suite Selected", "Please create or select a test suite first.");
-                return;
-            }
-            if (coordinator.getRootFolder() == null || coordinator.getRootFolder().isEmpty())
-            {
-                showErrorDialog("Student Submissions Folder Not Set", "Please set the folder containing student submissions first.");
-                return;
-            }
-            // Check if suite has any test cases
-            if (coordinator.getCurrentTestSuite().getTestCaseFilenames().isEmpty())
-            {
-                showErrorDialog("Empty Test Suite", "The selected test suite has no test cases. Please add test cases to the suite before executing.");
-                return;
-            }
-            showExecuteTestSuiteScreen();
+        backToMainButton.setOnAction(e -> {
+            showMainMenuScreen();
         });
+
+
+        refreshSuiteCaseList.run();
+        primaryStage.setScene(scene);
+    }
+
+    // Method to display the results management screen
+    // Provides options to load saved results and compare two result files
+    public void showResultsManagementScreen()
+    {
+        Coordinator coordinator = this.coordinator;
+
+        Label titleLabel = new Label("Results Manager");
+        titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 24px;");
+
+        Button loadResultsButton = new Button("Load Saved Results");
+        Button compareResultsButton = new Button("Compare Two Result Files");
+        Button backToMainButton = new Button("Back to Main Menu");
+
+        Button[] btns = {loadResultsButton, compareResultsButton, backToMainButton};
+        for (Button b : btns) {
+            styleButton(b, "10 20");
+        }
+
+        VBox layout = new VBox(20,
+                titleLabel,
+                new Separator(),
+                loadResultsButton,
+                compareResultsButton,
+                new Separator(),
+                backToMainButton
+        );
+
+        layout.setStyle("-fx-padding: 50; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
+
+        Scene scene = new Scene(layout, 800, 500);
 
         // Button action: Loads and visualizes saved test results from a serialized file
         loadResultsButton.setOnAction(e -> {
@@ -456,12 +542,10 @@ public class Ui
             }
         });
 
-        backToStartButton.setOnAction(e -> {
-            showWelcomeScreen();
+        backToMainButton.setOnAction(e -> {
+            showMainMenuScreen();
         });
 
-
-        refreshSuiteCaseList.run();
         primaryStage.setScene(scene);
     }
 
@@ -587,7 +671,7 @@ public class Ui
         });
 
         backButton.setOnAction(e -> {
-            showTestSuiteManagementScreen();
+            showResultsManagementScreen();
         });
 
         restartButton.setOnAction(e -> {
@@ -701,7 +785,7 @@ public class Ui
         });
 
         backButton.setOnAction(e -> {
-            showTestSuiteManagementScreen();
+            showMainMenuScreen();
         });
 
         primaryStage.setScene(scene);
@@ -1017,7 +1101,7 @@ public class Ui
         Scene scene = new Scene(layout, 1000, 750);
         
         backButton.setOnAction(e -> {
-            showTestSuiteManagementScreen();
+            showResultsManagementScreen();
         });
         
         restartButton.setOnAction(e -> {
@@ -1124,7 +1208,7 @@ public class Ui
         Scene scene = new Scene(layout, 1200, 750);
         
         backButton.setOnAction(e -> {
-            showTestSuiteManagementScreen();
+            showResultsManagementScreen();
         });
         
         restartButton.setOnAction(e -> {
