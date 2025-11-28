@@ -138,8 +138,9 @@ public class Ui
         Button saveSuiteButton = new Button("Save Suite");
         Button executeSuiteButton = new Button("Execute Test Suite");
         Button loadResultsButton = new Button("Load Saved Results");
+        Button compareResultsButton = new Button("Compare Two Result Files");
         Button backToStartButton = new Button("Back to Start");
-        Button[] otherButtons = {addCaseButton, removeCaseButton, saveSuiteButton, executeSuiteButton, loadResultsButton, backToStartButton};
+        Button[] otherButtons = {addCaseButton, removeCaseButton, saveSuiteButton, executeSuiteButton, loadResultsButton, compareResultsButton, backToStartButton};
         for (Button b : otherButtons) {
             styleButton(b);
         }
@@ -165,6 +166,7 @@ public class Ui
                 new Separator(),
                 executeSuiteButton,
                 loadResultsButton,
+                compareResultsButton,
                 backToStartButton
         );
 
@@ -409,6 +411,47 @@ public class Ui
                 catch (Exception ex)
                 {
                     showErrorDialog("Load Error", "Failed to load results: " + ex.getMessage());
+                }
+            }
+        });
+
+        // Button action: Compares success rates from two different result files
+        compareResultsButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select First Result File");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Serialized Files", "*.ser")
+            );
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+            
+            File firstFile = fileChooser.showOpenDialog(primaryStage);
+            if (firstFile != null)
+            {
+                try
+                {
+                    TestExecutionResults firstResults = coordinator.loadTestExecutionResults(firstFile);
+                    
+                    // Now select second file
+                    fileChooser.setTitle("Select Second Result File");
+                    File secondFile = fileChooser.showOpenDialog(primaryStage);
+                    if (secondFile != null)
+                    {
+                        try
+                        {
+                            TestExecutionResults secondResults = coordinator.loadTestExecutionResults(secondFile);
+                            showSuccessRateComparisonScreen(firstResults, secondResults);
+                        }
+                        catch (Exception ex)
+                        {
+                            showErrorDialog("Load Error", "Failed to load second result file: " + ex.getMessage());
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    showErrorDialog("Load Error", "Failed to load first result file: " + ex.getMessage());
                 }
             }
         });
@@ -979,6 +1022,193 @@ public class Ui
         });
         
         primaryStage.setScene(scene);
+    }
+
+    // Method to display side-by-side comparison of success rates from two result files
+    // Shows success rate as a fraction (passed/total) for each student
+    // Handles special cases: no resubmission, compile errors, etc.
+    private void showSuccessRateComparisonScreen(TestExecutionResults firstResults, TestExecutionResults secondResults)
+    {
+        Label titleLabel = new Label("Success Rate Comparison");
+        titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 18;");
+        
+        // Non-modifiable text areas for side-by-side display
+        TextArea firstResultsArea = new TextArea();
+        firstResultsArea.setEditable(false);
+        firstResultsArea.setWrapText(true);
+        firstResultsArea.setPrefRowCount(25);
+        firstResultsArea.setPrefColumnCount(50);
+        firstResultsArea.setStyle("-fx-control-inner-background: #262634; -fx-text-fill: #E8E8F2; -fx-background-radius: 6; -fx-font-family: 'Courier New', monospace;");
+        
+        TextArea secondResultsArea = new TextArea();
+        secondResultsArea.setEditable(false);
+        secondResultsArea.setWrapText(true);
+        secondResultsArea.setPrefRowCount(25);
+        secondResultsArea.setPrefColumnCount(50);
+        secondResultsArea.setStyle("-fx-control-inner-background: #262634; -fx-text-fill: #E8E8F2; -fx-background-radius: 6; -fx-font-family: 'Courier New', monospace;");
+        
+        // Calculate success rates for each student in both files
+        java.util.Map<String, String> firstRates = calculateSuccessRates(firstResults);
+        java.util.Map<String, String> secondRates = calculateSuccessRates(secondResults);
+        
+        // Get all unique student names from both files
+        java.util.Set<String> allStudents = new java.util.HashSet<>();
+        allStudents.addAll(firstRates.keySet());
+        allStudents.addAll(secondRates.keySet());
+        java.util.List<String> sortedStudents = new java.util.ArrayList<>(allStudents);
+        java.util.Collections.sort(sortedStudents);
+        
+        // Build text content for both sides
+        StringBuilder firstContent = new StringBuilder();
+        StringBuilder secondContent = new StringBuilder();
+        
+        // Headers
+        firstContent.append("First Submission\n");
+        firstContent.append("Suite: ").append(firstResults.getTestSuiteTitle()).append("\n");
+        firstContent.append(repeatString("=", 50)).append("\n");
+        firstContent.append(String.format("%-30s %s\n", "Student", "Success Rate"));
+        firstContent.append(repeatString("-", 50)).append("\n");
+        
+        secondContent.append("Second Submission\n");
+        secondContent.append("Suite: ").append(secondResults.getTestSuiteTitle()).append("\n");
+        secondContent.append(repeatString("=", 50)).append("\n");
+        secondContent.append(String.format("%-30s %s\n", "Student", "Success Rate"));
+        secondContent.append(repeatString("-", 50)).append("\n");
+        
+        // Add each student's success rate
+        for (String student : sortedStudents)
+        {
+            String firstRate = firstRates.getOrDefault(student, "No submission");
+            String secondRate = secondRates.getOrDefault(student, "No submission");
+            
+            firstContent.append(String.format("%-30s %s\n", student, firstRate));
+            secondContent.append(String.format("%-30s %s\n", student, secondRate));
+        }
+        
+        firstResultsArea.setText(firstContent.toString());
+        secondResultsArea.setText(secondContent.toString());
+        
+        Label firstLabel = new Label("First Submission:");
+        firstLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
+        Label secondLabel = new Label("Second Submission:");
+        secondLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
+        
+        Button backButton = new Button("Back");
+        Button restartButton = new Button("Restart from Beginning");
+        
+        Button[] btns = {backButton, restartButton};
+        for (Button b : btns) {
+            styleButton(b);
+        }
+        
+        HBox comparisonBox = new HBox(20,
+                new VBox(5, firstLabel, firstResultsArea),
+                new VBox(5, secondLabel, secondResultsArea)
+        );
+        comparisonBox.setStyle("-fx-padding: 10;");
+        
+        VBox layout = new VBox(10,
+                titleLabel,
+                new Separator(),
+                comparisonBox,
+                new Separator(),
+                backButton,
+                restartButton
+        );
+        
+        layout.setStyle("-fx-padding: 20; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
+        
+        Scene scene = new Scene(layout, 1200, 750);
+        
+        backButton.setOnAction(e -> {
+            showTestSuiteManagementScreen();
+        });
+        
+        restartButton.setOnAction(e -> {
+            showWelcomeScreen();
+        });
+        
+        primaryStage.setScene(scene);
+    }
+    
+    // Helper method to calculate success rates for each student in a result set
+    // Returns a map from student name to success rate string (e.g., "3/5" or "COMPILE ERROR")
+    // Success rate = number of test cases passed / total number of test cases in the test suite
+    private java.util.Map<String, String> calculateSuccessRates(TestExecutionResults results)
+    {
+        java.util.Map<String, String> rates = new java.util.HashMap<>();
+        java.util.Map<String, java.util.List<TestResult>> studentResults = new java.util.HashMap<>();
+        
+        // Group results by student
+        for (TestResult result : results.getResults())
+        {
+            String studentName = result.getStudentName();
+            if (!studentResults.containsKey(studentName))
+            {
+                studentResults.put(studentName, new java.util.ArrayList<>());
+            }
+            studentResults.get(studentName).add(result);
+        }
+        
+        int totalTestCases = results.getTotalTestCases();
+        
+        // Calculate success rate for each student
+        for (java.util.Map.Entry<String, java.util.List<TestResult>> entry : studentResults.entrySet())
+        {
+            String studentName = entry.getKey();
+            java.util.List<TestResult> studentTestResults = entry.getValue();
+            
+            // Filter out skipped entries (they don't count toward test cases)
+            java.util.List<TestResult> validResults = new java.util.ArrayList<>();
+            for (TestResult result : studentTestResults)
+            {
+                if (!result.getStatus().startsWith("SKIPPED"))
+                {
+                    validResults.add(result);
+                }
+            }
+            
+            // If no valid results, mark as no submission
+            if (validResults.isEmpty())
+            {
+                rates.put(studentName, "No submission");
+                continue;
+            }
+            
+            // Check if all tests failed to compile
+            boolean allCompileErrors = true;
+            for (TestResult result : validResults)
+            {
+                if (!result.getStatus().equals("COMPILE ERROR"))
+                {
+                    allCompileErrors = false;
+                    break;
+                }
+            }
+            
+            if (allCompileErrors)
+            {
+                rates.put(studentName, "COMPILE ERROR");
+                continue;
+            }
+            
+            // Count passed tests
+            int passed = 0;
+            for (TestResult result : validResults)
+            {
+                if (result.getStatus().equals("PASSED"))
+                {
+                    passed++;
+                }
+            }
+            
+            // Calculate success rate as fraction: passed / total test cases in suite
+            // Use totalTestCases from the suite (as per requirement: "number of test cases passed 
+            // divided by the total number of test cases in the test suite")
+            rates.put(studentName, passed + "/" + totalTestCases);
+        }
+        
+        return rates;
     }
 
     // Helper method to sanitize a string to be a valid filename
