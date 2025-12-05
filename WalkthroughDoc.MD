@@ -15,10 +15,11 @@ Choose the correct folder and confirm.
 ---
 
 ## 3. Entering the Main Menu
-After selecting the student folder, you will arrive at the **Main Menu**, which contains two options:
+After selecting the student folder, you will arrive at the **Main Menu**, which contains three main options:
 
 - **Test Manager**  
 - **Results Manager**
+- **Execute Test Suite**
 
 For this walkthrough, choose **Test Manager**.
 
@@ -84,18 +85,57 @@ Each folder’s results are separated visually by a line of dashes (`----------`
 To view why a test failed:
 
 - Select the corresponding row  
-- Click **Comparison**  
-- You will see the expected output versus the actual output.
+- Click **View Comparison (Selected)**  
+- You will see the expected output versus the actual output displayed side-by-side.
 
 ---
 
 ## 11. Saving Results
-Results can be saved in two formats:
+From the results screen, you can save your test results in two formats:
 
-- **Text file**  
-- **Serialized file** (recommended, as these can be reused independently later)
+- **Text file** (`Save Results As... (Text)`) - A human-readable text file containing all results  
+- **Serialized file** (`Save Results (Serialized)`) - A binary `.ser` file that preserves all result data and metadata (recommended, as these can be reloaded and compared later)
 
 Choose the format you prefer and save your results for future reference.
+
+---
+
+## 12. Accessing the Results Manager
+To work with previously saved results, navigate to the **Main Menu** and click **Results Manager**.  
+The Results Manager provides two options:
+
+- **Load Saved Results** - View previously saved test results  
+- **Compare Two Result Files** - Compare success rates between two different result files
+
+---
+
+## 13. Loading Saved Results
+To view previously saved results:
+
+1. From the **Results Manager**, click **Load Saved Results**.  
+2. A file chooser will appear, filtering for serialized files (`.ser`).  
+3. Select the saved results file you want to view.  
+4. The results will be displayed in a read-only text area showing:
+   - Test suite metadata (title, root folder, code path, total test cases)
+   - All test results grouped by student (separated by dividers)
+   - Summary statistics (total results, passed, failed, compile errors, runtime errors, skipped)
+
+You can navigate back to the Results Manager or restart the application from this screen.
+
+---
+
+## 14. Comparing Two Result Files
+To compare success rates between two different result files (useful for comparing initial submissions with resubmissions):
+
+1. From the **Results Manager**, click **Compare Two Result Files**.  
+2. Select the first result file (`.ser` format).  
+3. Select the second result file (`.ser` format).  
+4. A side-by-side comparison will display showing:
+   - Each student's success rate as a fraction (e.g., "3/5" means 3 out of 5 tests passed)
+   - Special indicators for compile errors or cases where a student appears in only one file
+   - Both result sets displayed side-by-side for easy comparison
+
+This is particularly useful for tracking student improvement between submissions.
 
 ---
 
