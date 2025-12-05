@@ -518,11 +518,11 @@ public class Ui
                     File secondFile = fileChooser.showOpenDialog(primaryStage);
                     if (secondFile != null)
                     {
-                        try
-                        {
-                            TestExecutionResults secondResults = coordinator.loadTestExecutionResults(secondFile);
-                            showSuccessRateComparisonScreen(firstResults, secondResults);
-                        }
+                    try
+                    {
+                        TestExecutionResults secondResults = coordinator.loadTestExecutionResults(secondFile);
+                        showSuccessRateComparisonScreen(firstResults, secondResults, firstFile.getName(), secondFile.getName());
+                    }
                         catch (Exception ex)
                         {
                             showErrorDialog("Load Error", "Failed to load second result file: " + ex.getMessage());
@@ -1108,7 +1108,7 @@ public class Ui
     // Method to display side-by-side comparison of success rates from two result files
     // Shows success rate as a fraction (passed/total) for each student
     // Handles special cases: no resubmission, compile errors, etc.
-    private void showSuccessRateComparisonScreen(TestExecutionResults firstResults, TestExecutionResults secondResults)
+    private void showSuccessRateComparisonScreen(TestExecutionResults firstResults, TestExecutionResults secondResults, String firstFileName, String secondFileName)
     {
         Label titleLabel = new Label("Success Rate Comparison");
         titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 18;");
@@ -1145,12 +1145,14 @@ public class Ui
         
         // Headers
         firstContent.append("First Submission\n");
+        firstContent.append("File: ").append(firstFileName).append("\n");
         firstContent.append("Suite: ").append(firstResults.getTestSuiteTitle()).append("\n");
         firstContent.append(repeatString("=", 50)).append("\n");
         firstContent.append(String.format("%-30s %s\n", "Student", "Success Rate"));
         firstContent.append(repeatString("-", 50)).append("\n");
         
         secondContent.append("Second Submission\n");
+        secondContent.append("File: ").append(secondFileName).append("\n");
         secondContent.append("Suite: ").append(secondResults.getTestSuiteTitle()).append("\n");
         secondContent.append(repeatString("=", 50)).append("\n");
         secondContent.append(String.format("%-30s %s\n", "Student", "Success Rate"));

@@ -396,6 +396,7 @@ C:\CS101\Assignment1\Results
 **Left side (First Submission):**
 ```
 First Submission
+File: InitialSubmissions_Assignment1.ser
 Suite: Assignment1_SumCalculator
 ==================================================
 Student                    Success Rate
@@ -409,6 +410,7 @@ Student4                   2/3
 **Right side (Second Submission):**
 ```
 Second Submission
+File: Resubmissions_Assignment1.ser
 Suite: Assignment1_SumCalculator
 ==================================================
 Student                    Success Rate
@@ -419,7 +421,13 @@ Student3                   3/3
 Student4                   3/3
 ```
 
-**Note:** 
+**Note:** Each side displays:
+- A header label ("First Submission" or "Second Submission")
+- The result file name ("File: [filename].ser") - this identifies which saved result file is being compared
+- The test suite title ("Suite: Assignment1_SumCalculator") - this identifies which test suite was used
+- A table showing each student's success rate
+
+**Additional details:**
 - Success rates show as fractions (e.g., "3/3" means 3 out of 3 tests passed)
 - "COMPILE ERROR" appears when all tests failed to compile
 - "No submission" appears if a student is missing from one file
