@@ -1,5 +1,6 @@
 #BlueJ class context
 comment0.target=Program
+comment0.text=\ Represents\ an\ external\ Java\ program\ submission.\r\n\ This\ class\ is\ responsible\ for\ compiling\ and\ running\ the\ external\ source\ file\r\nand\ managing\ the\ results\ (exit\ code,\ output,\ compilation\ status).
 comment1.params=name\ sourceFile
 comment1.target=Program(java.lang.String,\ java.io.File)
 comment2.params=

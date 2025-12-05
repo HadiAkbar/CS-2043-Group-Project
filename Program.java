@@ -34,8 +34,8 @@ public class Program
     // Additional: Needed for compiling or executing the student's program
     public File getSourceFile() { return sourceFile; }
     
-    //Attempts to compile the source file using the 'javac' command.
-    //The compilation is run as a separate external process.
+    //Attempts to compile the source file using the 'javac' command.
+    //The compilation is run as a separate external process.
     // Compile this Java program
     // Returns true if compilation succeeds, false otherwise
     public boolean compile()
@@ -80,8 +80,8 @@ public class Program
         }
     }
     
-    //Extracts the main public class name from the source file content.
-    //This is required to properly execute the program using 'java <className>'.
+    //Extracts the main public class name from the source file content.
+    //This is required to properly execute the program using 'java <className>'.
     // Extract the class name from the Java source file
     // Reads the file and finds the public class declaration
     private String extractClassName()
@@ -121,7 +121,7 @@ public class Program
         }
         catch (Exception e)
         {   // Handle exceptions during file reading or string manipulation]
-            // If extraction fails, fall back to filename
+            // If extraction fails, fall back to filename
         }
         
         // Fallback: use filename without extension
@@ -129,8 +129,8 @@ public class Program
         return className;
     }
     
-    //Executes the compiled Java class file with the provided input data.
-    //It pipes inputData to stdin and captures all output from stdout/stderr.
+    //Executes the compiled Java class file with the provided input data.
+    //It pipes inputData to stdin and captures all output from stdout/stderr.
     // Run this compiled Java program with input data
     // Returns the program's output as a string
     public String run(String inputData)
@@ -229,8 +229,8 @@ public class Program
         return compilationStatus;
     }
 
-    //Executes a single test case against the compiled program.
-    //Handles compilation status, runtime errors, and output comparison.
+    //Executes a single test case against the compiled program.
+    //Handles compilation status, runtime errors, and output comparison.
     // Execute a test case against this program
     // Returns a TestResult object containing execution results
     public TestResult executeTestCase(TestCase testCase)
@@ -268,7 +268,7 @@ public class Program
     }
 
     //Compares the actual output string against the expected output based on the specified data type.
-    //The comparison logic is crucial for robust test case validation.
+    //The comparison logic is crucial for robust test case validation.
     // Helper method to compare actual output with expected output
     // Handles different types (Boolean, Int, Double, String) appropriately
     private boolean compareOutputs(String actual, String expected, String type)

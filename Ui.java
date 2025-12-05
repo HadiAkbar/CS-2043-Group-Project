@@ -88,7 +88,7 @@ public class Ui
                 if (folder.exists() && folder.isDirectory())
                 {
                     coordinator.setRootFolder(path);
-                    showTestSuiteManagementScreen();
+                    showMainMenuScreen();
                 }
                 else
                 {
@@ -104,6 +104,74 @@ public class Ui
         });
 
         Scene scene = new Scene(layout, 800, 500);
+        primaryStage.setScene(scene);
+    }
+
+    // Method to display the main menu screen
+    // Provides navigation to Test Manager, Results Manager, and Execute
+    public void showMainMenuScreen()
+    {
+        Coordinator coordinator = this.coordinator;
+
+        Label titleLabel = new Label("Main Menu");
+        titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 24px;");
+        
+        Label rootFolderLabel = new Label("Student Submissions Folder: " + 
+            (coordinator.getRootFolder() != null ? coordinator.getRootFolder() : "Not set"));
+        rootFolderLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-size: 14px;");
+        
+        Button testManagerButton = new Button("Test Manager");
+        Button resultsManagerButton = new Button("Results Manager");
+        Button executeButton = new Button("Execute Test Suite");
+        Button changeFolderButton = new Button("Change Root Folder / Back to Start");
+
+        Button[] btns = {testManagerButton, resultsManagerButton, executeButton, changeFolderButton};
+        for (Button b : btns) {
+            styleButton(b, "10 20");
+        }
+
+        VBox layout = new VBox(20,
+                titleLabel,
+                new Separator(),
+                rootFolderLabel,
+                new Separator(),
+                testManagerButton,
+                resultsManagerButton,
+                executeButton,
+                new Separator(),
+                changeFolderButton
+        );
+
+        layout.setStyle("-fx-padding: 50; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
+
+        Scene scene = new Scene(layout, 800, 600);
+
+        testManagerButton.setOnAction(e -> {
+            showTestSuiteManagementScreen();
+        });
+
+        resultsManagerButton.setOnAction(e -> {
+            showResultsManagementScreen();
+        });
+
+        executeButton.setOnAction(e -> {
+            if (coordinator.getCurrentTestSuite() == null)
+            {
+                showErrorDialog("No Suite Selected", "Please select a test suite first. Go to Test Manager to create or select a suite.");
+                return;
+            }
+            if (coordinator.getCurrentTestSuite().getTestCaseFilenames().isEmpty())
+            {
+                showErrorDialog("Empty Test Suite", "The selected test suite has no test cases. Please add test cases to the suite in Test Manager.");
+                return;
+            }
+            showExecuteTestSuiteScreen();
+        });
+
+        changeFolderButton.setOnAction(e -> {
+            showFolderSelectionScreen();
+        });
+
         primaryStage.setScene(scene);
     }
 
@@ -136,9 +204,8 @@ public class Ui
         Button addCaseButton = new Button("Add Test Case to Suite");
         Button removeCaseButton = new Button("Remove Test Case from Suite");
         Button saveSuiteButton = new Button("Save Suite");
-        Button executeSuiteButton = new Button("Execute Test Suite");
-        Button backToStartButton = new Button("Back to Start");
-        Button[] otherButtons = {addCaseButton, removeCaseButton, saveSuiteButton, executeSuiteButton, backToStartButton};
+        Button backToMainButton = new Button("Back to Main Menu");
+        Button[] otherButtons = {addCaseButton, removeCaseButton, saveSuiteButton, backToMainButton};
         for (Button b : otherButtons) {
             styleButton(b);
         }
@@ -162,8 +229,7 @@ public class Ui
                 removeCaseButton,
                 saveSuiteButton,
                 new Separator(),
-                executeSuiteButton,
-                backToStartButton
+                backToMainButton
         );
 
         // style labels inside the layout (header & list label)
@@ -363,34 +429,117 @@ public class Ui
             }
         });
 
-        // Button action: Navigates to the test suite execution screen
-        // Validates that a suite is selected and root folder is set before proceeding
-        executeSuiteButton.setOnAction(e -> {
-            if (coordinator.getCurrentTestSuite() == null)
-            {
-                showErrorDialog("No Suite Selected", "Please create or select a test suite first.");
-                return;
-            }
-            if (coordinator.getRootFolder() == null || coordinator.getRootFolder().isEmpty())
-            {
-                showErrorDialog("Student Submissions Folder Not Set", "Please set the folder containing student submissions first.");
-                return;
-            }
-            // Check if suite has any test cases
-            if (coordinator.getCurrentTestSuite().getTestCaseFilenames().isEmpty())
-            {
-                showErrorDialog("Empty Test Suite", "The selected test suite has no test cases. Please add test cases to the suite before executing.");
-                return;
-            }
-            showExecuteTestSuiteScreen();
-        });
-
-        backToStartButton.setOnAction(e -> {
-            showWelcomeScreen();
+        backToMainButton.setOnAction(e -> {
+            showMainMenuScreen();
         });
 
 
         refreshSuiteCaseList.run();
+        primaryStage.setScene(scene);
+    }
+
+    // Method to display the results management screen
+    // Provides options to load saved results and compare two result files
+    public void showResultsManagementScreen()
+    {
+        Coordinator coordinator = this.coordinator;
+
+        Label titleLabel = new Label("Results Manager");
+        titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 24px;");
+
+        Button loadResultsButton = new Button("Load Saved Results");
+        Button compareResultsButton = new Button("Compare Two Result Files");
+        Button backToMainButton = new Button("Back to Main Menu");
+
+        Button[] btns = {loadResultsButton, compareResultsButton, backToMainButton};
+        for (Button b : btns) {
+            styleButton(b, "10 20");
+        }
+
+        VBox layout = new VBox(20,
+                titleLabel,
+                new Separator(),
+                loadResultsButton,
+                compareResultsButton,
+                new Separator(),
+                backToMainButton
+        );
+
+        layout.setStyle("-fx-padding: 50; -fx-alignment: center; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
+
+        Scene scene = new Scene(layout, 800, 500);
+
+        // Button action: Loads and visualizes saved test results from a serialized file
+        loadResultsButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load Saved Test Results");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Serialized Files", "*.ser")
+            );
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+            
+            File file = fileChooser.showOpenDialog(primaryStage);
+            if (file != null)
+            {
+                try
+                {
+                    TestExecutionResults executionResults = coordinator.loadTestExecutionResults(file);
+                    showLoadedResultsScreen(executionResults);
+                }
+                catch (Exception ex)
+                {
+                    showErrorDialog("Load Error", "Failed to load results: " + ex.getMessage());
+                }
+            }
+        });
+
+        // Button action: Compares success rates from two different result files
+        compareResultsButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select First Result File");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Serialized Files", "*.ser")
+            );
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+            
+            File firstFile = fileChooser.showOpenDialog(primaryStage);
+            if (firstFile != null)
+            {
+                try
+                {
+                    TestExecutionResults firstResults = coordinator.loadTestExecutionResults(firstFile);
+                    
+                    // Now select second file
+                    fileChooser.setTitle("Select Second Result File");
+                    File secondFile = fileChooser.showOpenDialog(primaryStage);
+                    if (secondFile != null)
+                    {
+                        try
+                        {
+                            TestExecutionResults secondResults = coordinator.loadTestExecutionResults(secondFile);
+                            showSuccessRateComparisonScreen(firstResults, secondResults);
+                        }
+                        catch (Exception ex)
+                        {
+                            showErrorDialog("Load Error", "Failed to load second result file: " + ex.getMessage());
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    showErrorDialog("Load Error", "Failed to load first result file: " + ex.getMessage());
+                }
+            }
+        });
+
+        backToMainButton.setOnAction(e -> {
+            showMainMenuScreen();
+        });
+
         primaryStage.setScene(scene);
     }
 
@@ -516,7 +665,7 @@ public class Ui
         });
 
         backButton.setOnAction(e -> {
-            showTestSuiteManagementScreen();
+            showResultsManagementScreen();
         });
 
         restartButton.setOnAction(e -> {
@@ -630,7 +779,7 @@ public class Ui
         });
 
         backButton.setOnAction(e -> {
-            showTestSuiteManagementScreen();
+            showMainMenuScreen();
         });
 
         primaryStage.setScene(scene);
@@ -653,15 +802,20 @@ public class Ui
         resultsList.setStyle("-fx-background-color: #262634; -fx-control-inner-background: #262634; -fx-border-color: #3a3a5a; -fx-border-radius: 6; -fx-padding: 6; -fx-text-fill: #E8E8F2;");
 
         Button viewComparisonButton = new Button("View Comparison (Selected)");
-        Button saveAsButton = new Button("Save Results As...");
+        Button saveAsButton = new Button("Save Results As... (Text)");
+        Button saveSerializedButton = new Button("Save Results (Serialized)");
         Button backButton = new Button("Back");
         Button restartButton = new Button("Restart from Beginning");
 
-        Button[] btns = {viewComparisonButton, saveAsButton, backButton, restartButton};
+        Button[] btns = {viewComparisonButton, saveAsButton, saveSerializedButton, backButton, restartButton};
         for (Button b : btns) {
             styleButton(b);
         }
 
+        // Put save buttons in same row
+        HBox saveButtonsBox = new HBox(10, saveAsButton, saveSerializedButton);
+        saveButtonsBox.setStyle("-fx-alignment: center;");
+        
         VBox layout = new VBox(10,
                 titleLabel,
                 new Separator(),
@@ -669,7 +823,7 @@ public class Ui
                 resultsList,
                 new Separator(),
                 viewComparisonButton,
-                saveAsButton,
+                saveButtonsBox,
                 backButton,
                 restartButton
         );
@@ -757,7 +911,7 @@ public class Ui
             }
         });
 
-        // Button action: Saves the test results to a file
+        // Button action: Saves the test results to a text file
         saveAsButton.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Test Results As...");
@@ -787,6 +941,46 @@ public class Ui
                 }
             }
         });
+        
+        // Button action: Saves the test results as a serialized object
+        saveSerializedButton.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Test Results (Serialized)");
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Serialized Files", "*.ser")
+            );
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+            );
+            
+            // Suggest a filename based on suite title
+            String suiteTitle = coordinator.getCurrentTestSuite().getTitle();
+            String suggestedFilename = sanitizeFilename(suiteTitle) + "_results.ser";
+            fileChooser.setInitialFileName(suggestedFilename);
+            
+            File file = fileChooser.showSaveDialog(primaryStage);
+            if (file != null)
+            {
+                try
+                {
+                    // Create TestExecutionResults object with all metadata
+                    TestExecutionResults executionResults = new TestExecutionResults(
+                        suiteTitle,
+                        coordinator.getLastExecutionRootFolder(),
+                        coordinator.getLastExecutionCodePath(),
+                        results
+                    );
+                    
+                    // Save using serialization
+                    coordinator.saveTestExecutionResults(executionResults, file);
+                    showInfoDialog("Results Saved", "Test results have been saved (serialized) to:\n" + file.getAbsolutePath());
+                }
+                catch (Exception ex)
+                {
+                    showErrorDialog("Save Error", "Failed to save results: " + ex.getMessage());
+                }
+            }
+        });
 
         backButton.setOnAction(e -> {
             showExecuteTestSuiteScreen();
@@ -797,6 +991,304 @@ public class Ui
         });
 
         primaryStage.setScene(scene);
+    }
+
+    // Method to display loaded test results in a simple text-based interface
+    // Shows results in a non-modifiable text box as specified in feature 3
+    private void showLoadedResultsScreen(TestExecutionResults executionResults)
+    {
+        Label titleLabel = new Label("Loaded Test Results: " + executionResults.getTestSuiteTitle());
+        titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 18;");
+        
+        // Non-modifiable text area to display results
+        TextArea resultsArea = new TextArea();
+        resultsArea.setEditable(false);
+        resultsArea.setWrapText(true);
+        resultsArea.setPrefRowCount(25);
+        resultsArea.setPrefColumnCount(80);
+        resultsArea.setStyle("-fx-control-inner-background: #262634; -fx-text-fill: #E8E8F2; -fx-background-radius: 6; -fx-font-family: 'Courier New', monospace;");
+        
+        // Build the text content
+        StringBuilder content = new StringBuilder();
+        content.append("Test Suite: ").append(executionResults.getTestSuiteTitle()).append("\n");
+        content.append("Root Folder: ").append(executionResults.getRootFolderPath()).append("\n");
+        content.append("Code Path: ").append(executionResults.getCodePath().isEmpty() ? "(root)" : executionResults.getCodePath()).append("\n");
+        content.append("Total Test Cases: ").append(executionResults.getTotalTestCases()).append("\n");
+        content.append("\n");
+        content.append(repeatString("=", 80)).append("\n");
+        content.append("\n");
+        
+        // Group results by student
+        String currentStudent = null;
+        for (TestResult result : executionResults.getResults())
+        {
+            String studentName = result.getStudentName();
+            
+            // Add divider when student changes
+            if (currentStudent != null && !currentStudent.equals(studentName))
+            {
+                content.append(repeatString("-", 80)).append("\n");
+            }
+            
+            // Write result line
+            if (result.getStatus().startsWith("SKIPPED"))
+            {
+                content.append(studentName).append(" | ").append(result.getStatus()).append("\n");
+            }
+            else
+            {
+                content.append(studentName).append(" | ").append(result.getTestCaseTitle())
+                       .append(" | ").append(result.getStatus()).append("\n");
+            }
+            
+            currentStudent = studentName;
+        }
+        
+        // Add summary
+        content.append("\n");
+        content.append(repeatString("=", 80)).append("\n");
+        content.append("Summary:\n");
+        List<TestResult> results = executionResults.getResults();
+        int total = results.size();
+        long passed = results.stream().filter(r -> r.getStatus().equals("PASSED")).count();
+        long failed = results.stream().filter(r -> r.getStatus().equals("FAILED")).count();
+        long compileErrors = results.stream().filter(r -> r.getStatus().equals("COMPILE ERROR")).count();
+        long runtimeErrors = results.stream().filter(r -> r.getStatus().equals("RUNTIME ERROR")).count();
+        long skipped = results.stream().filter(r -> r.getStatus().startsWith("SKIPPED")).count();
+        
+        content.append("Total Results: ").append(total).append("\n");
+        content.append("Passed: ").append(passed).append("\n");
+        content.append("Failed: ").append(failed).append("\n");
+        content.append("Compile Errors: ").append(compileErrors).append("\n");
+        content.append("Runtime Errors: ").append(runtimeErrors).append("\n");
+        content.append("Skipped: ").append(skipped).append("\n");
+        
+        resultsArea.setText(content.toString());
+        
+        Button backButton = new Button("Back");
+        Button restartButton = new Button("Restart from Beginning");
+        
+        Button[] btns = {backButton, restartButton};
+        for (Button b : btns) {
+            styleButton(b);
+        }
+        
+        VBox layout = new VBox(10,
+                titleLabel,
+                new Separator(),
+                new Label("Results:"),
+                resultsArea,
+                new Separator(),
+                backButton,
+                restartButton
+        );
+        
+        // Style labels
+        for (javafx.scene.Node node : layout.getChildren()) {
+            if (node instanceof Label) {
+                ((Label) node).setStyle("-fx-text-fill: #E8E8F2;");
+            }
+        }
+        
+        layout.setStyle("-fx-padding: 20; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
+        
+        Scene scene = new Scene(layout, 1000, 750);
+        
+        backButton.setOnAction(e -> {
+            showResultsManagementScreen();
+        });
+        
+        restartButton.setOnAction(e -> {
+            showWelcomeScreen();
+        });
+        
+        primaryStage.setScene(scene);
+    }
+
+    // Method to display side-by-side comparison of success rates from two result files
+    // Shows success rate as a fraction (passed/total) for each student
+    // Handles special cases: no resubmission, compile errors, etc.
+    private void showSuccessRateComparisonScreen(TestExecutionResults firstResults, TestExecutionResults secondResults)
+    {
+        Label titleLabel = new Label("Success Rate Comparison");
+        titleLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600; -fx-font-size: 18;");
+        
+        // Non-modifiable text areas for side-by-side display
+        TextArea firstResultsArea = new TextArea();
+        firstResultsArea.setEditable(false);
+        firstResultsArea.setWrapText(true);
+        firstResultsArea.setPrefRowCount(25);
+        firstResultsArea.setPrefColumnCount(50);
+        firstResultsArea.setStyle("-fx-control-inner-background: #262634; -fx-text-fill: #E8E8F2; -fx-background-radius: 6; -fx-font-family: 'Courier New', monospace;");
+        
+        TextArea secondResultsArea = new TextArea();
+        secondResultsArea.setEditable(false);
+        secondResultsArea.setWrapText(true);
+        secondResultsArea.setPrefRowCount(25);
+        secondResultsArea.setPrefColumnCount(50);
+        secondResultsArea.setStyle("-fx-control-inner-background: #262634; -fx-text-fill: #E8E8F2; -fx-background-radius: 6; -fx-font-family: 'Courier New', monospace;");
+        
+        // Calculate success rates for each student in both files
+        java.util.Map<String, String> firstRates = calculateSuccessRates(firstResults);
+        java.util.Map<String, String> secondRates = calculateSuccessRates(secondResults);
+        
+        // Get all unique student names from both files
+        java.util.Set<String> allStudents = new java.util.HashSet<>();
+        allStudents.addAll(firstRates.keySet());
+        allStudents.addAll(secondRates.keySet());
+        java.util.List<String> sortedStudents = new java.util.ArrayList<>(allStudents);
+        java.util.Collections.sort(sortedStudents);
+        
+        // Build text content for both sides
+        StringBuilder firstContent = new StringBuilder();
+        StringBuilder secondContent = new StringBuilder();
+        
+        // Headers
+        firstContent.append("First Submission\n");
+        firstContent.append("Suite: ").append(firstResults.getTestSuiteTitle()).append("\n");
+        firstContent.append(repeatString("=", 50)).append("\n");
+        firstContent.append(String.format("%-30s %s\n", "Student", "Success Rate"));
+        firstContent.append(repeatString("-", 50)).append("\n");
+        
+        secondContent.append("Second Submission\n");
+        secondContent.append("Suite: ").append(secondResults.getTestSuiteTitle()).append("\n");
+        secondContent.append(repeatString("=", 50)).append("\n");
+        secondContent.append(String.format("%-30s %s\n", "Student", "Success Rate"));
+        secondContent.append(repeatString("-", 50)).append("\n");
+        
+        // Add each student's success rate
+        for (String student : sortedStudents)
+        {
+            String firstRate = firstRates.getOrDefault(student, "No submission");
+            String secondRate = secondRates.getOrDefault(student, "No submission");
+            
+            firstContent.append(String.format("%-30s %s\n", student, firstRate));
+            secondContent.append(String.format("%-30s %s\n", student, secondRate));
+        }
+        
+        firstResultsArea.setText(firstContent.toString());
+        secondResultsArea.setText(secondContent.toString());
+        
+        Label firstLabel = new Label("First Submission:");
+        firstLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
+        Label secondLabel = new Label("Second Submission:");
+        secondLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-weight: 600;");
+        
+        Button backButton = new Button("Back");
+        Button restartButton = new Button("Restart from Beginning");
+        
+        Button[] btns = {backButton, restartButton};
+        for (Button b : btns) {
+            styleButton(b);
+        }
+        
+        HBox comparisonBox = new HBox(20,
+                new VBox(5, firstLabel, firstResultsArea),
+                new VBox(5, secondLabel, secondResultsArea)
+        );
+        comparisonBox.setStyle("-fx-padding: 10;");
+        
+        VBox layout = new VBox(10,
+                titleLabel,
+                new Separator(),
+                comparisonBox,
+                new Separator(),
+                backButton,
+                restartButton
+        );
+        
+        layout.setStyle("-fx-padding: 20; -fx-background-color: linear-gradient(to bottom right, #1e1e2f, #2d2d44);");
+        
+        Scene scene = new Scene(layout, 1200, 750);
+        
+        backButton.setOnAction(e -> {
+            showResultsManagementScreen();
+        });
+        
+        restartButton.setOnAction(e -> {
+            showWelcomeScreen();
+        });
+        
+        primaryStage.setScene(scene);
+    }
+    
+    // Helper method to calculate success rates for each student in a result set
+    // Returns a map from student name to success rate string (e.g., "3/5" or "COMPILE ERROR")
+    // Success rate = number of test cases passed / total number of test cases in the test suite
+    private java.util.Map<String, String> calculateSuccessRates(TestExecutionResults results)
+    {
+        java.util.Map<String, String> rates = new java.util.HashMap<>();
+        java.util.Map<String, java.util.List<TestResult>> studentResults = new java.util.HashMap<>();
+        
+        // Group results by student
+        for (TestResult result : results.getResults())
+        {
+            String studentName = result.getStudentName();
+            if (!studentResults.containsKey(studentName))
+            {
+                studentResults.put(studentName, new java.util.ArrayList<>());
+            }
+            studentResults.get(studentName).add(result);
+        }
+        
+        int totalTestCases = results.getTotalTestCases();
+        
+        // Calculate success rate for each student
+        for (java.util.Map.Entry<String, java.util.List<TestResult>> entry : studentResults.entrySet())
+        {
+            String studentName = entry.getKey();
+            java.util.List<TestResult> studentTestResults = entry.getValue();
+            
+            // Filter out skipped entries (they don't count toward test cases)
+            java.util.List<TestResult> validResults = new java.util.ArrayList<>();
+            for (TestResult result : studentTestResults)
+            {
+                if (!result.getStatus().startsWith("SKIPPED"))
+                {
+                    validResults.add(result);
+                }
+            }
+            
+            // If no valid results, mark as no submission
+            if (validResults.isEmpty())
+            {
+                rates.put(studentName, "No submission");
+                continue;
+            }
+            
+            // Check if all tests failed to compile
+            boolean allCompileErrors = true;
+            for (TestResult result : validResults)
+            {
+                if (!result.getStatus().equals("COMPILE ERROR"))
+                {
+                    allCompileErrors = false;
+                    break;
+                }
+            }
+            
+            if (allCompileErrors)
+            {
+                rates.put(studentName, "COMPILE ERROR");
+                continue;
+            }
+            
+            // Count passed tests
+            int passed = 0;
+            for (TestResult result : validResults)
+            {
+                if (result.getStatus().equals("PASSED"))
+                {
+                    passed++;
+                }
+            }
+            
+            // Calculate success rate as fraction: passed / total test cases in suite
+            // Use totalTestCases from the suite (as per requirement)
+            rates.put(studentName, passed + "/" + totalTestCases);
+        }
+        
+        return rates;
     }
 
     // Helper method to sanitize a string to be a valid filename
