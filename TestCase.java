@@ -38,13 +38,16 @@ public class TestCase
         return sanitizeFilename(title) + ".testcase";
     }
 
-    // Save test case to a file under rootFolder/test-cases
+    // Save test case to a file under rootFolder/test-cases (case-insensitive folder lookup)
     // Additional: Creates the folder if it does not exist, writes fields in order
     public void saveToFile(String rootFolder) throws IOException
     {
-        File testCasesFolder = new File(rootFolder, "test-cases");
-        if (!testCasesFolder.exists())
+        File rootFolderFile = new File(rootFolder);
+        File testCasesFolder = findFolderCaseInsensitive(rootFolderFile, "test-cases");
+        if (testCasesFolder == null)
         {
+            // Folder doesn't exist, create it with standard name
+            testCasesFolder = new File(rootFolder, "test-cases");
             testCasesFolder.mkdirs(); // Additional: Ensure folder exists
         }
 
@@ -75,6 +78,29 @@ public class TestCase
             lines.get(3), // expectedOutput
             lines.get(1)  // type
         );
+    }
+
+    // Helper method to find a folder by name case-insensitively
+    // Returns the actual folder File if found, or null if not found
+    private static File findFolderCaseInsensitive(File parentFolder, String folderName)
+    {
+        if (parentFolder == null || !parentFolder.exists() || !parentFolder.isDirectory())
+        {
+            return null;
+        }
+        
+        File[] files = parentFolder.listFiles(File::isDirectory);
+        if (files != null)
+        {
+            for (File file : files)
+            {
+                if (file.getName().equalsIgnoreCase(folderName))
+                {
+                    return file;
+                }
+            }
+        }
+        return null;
     }
 
     // Helper method to sanitize a string to be a valid filename

@@ -39,13 +39,16 @@ public class TestSuite
         testCaseFilenames.remove(filename);
     }
 
-    // Save this test suite to a file in rootFolder/test-suites
+    // Save this test suite to a file in rootFolder/test-suites (case-insensitive folder lookup)
     // Additional: Creates folder if necessary and writes title + list of test case filenames
     public void saveToFile(String rootFolder) throws IOException
     {
-        File suitesFolder = new File(rootFolder, "test-suites");
-        if (!suitesFolder.exists())
+        File rootFolderFile = new File(rootFolder);
+        File suitesFolder = findFolderCaseInsensitive(rootFolderFile, "test-suites");
+        if (suitesFolder == null)
         {
+            // Folder doesn't exist, create it with standard name
+            suitesFolder = new File(rootFolder, "test-suites");
             suitesFolder.mkdirs(); // Ensure folder exists
         }
 
@@ -82,6 +85,29 @@ public class TestSuite
             }
         }
         return suite;
+    }
+
+    // Helper method to find a folder by name case-insensitively
+    // Returns the actual folder File if found, or null if not found
+    private static File findFolderCaseInsensitive(File parentFolder, String folderName)
+    {
+        if (parentFolder == null || !parentFolder.exists() || !parentFolder.isDirectory())
+        {
+            return null;
+        }
+        
+        File[] files = parentFolder.listFiles(File::isDirectory);
+        if (files != null)
+        {
+            for (File file : files)
+            {
+                if (file.getName().equalsIgnoreCase(folderName))
+                {
+                    return file;
+                }
+            }
+        }
+        return null;
     }
 
     // Helper to sanitize suite title to be a valid filename

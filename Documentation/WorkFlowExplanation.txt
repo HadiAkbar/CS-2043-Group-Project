@@ -1,0 +1,52 @@
+# Group 3 Submission 3 (THREE not 4) Workflow
+
+**Author:** Christian Dennis
+
+## Before You Start
+- Ensure you already downloaded every student program as its own subfolder inside a single root directory.
+- Have the path to that root directory ready (copy/paste works best).
+
+## Step 1 – Choose the Student Submissions Folder
+1. Launch the tool and either type or browse to the root folder containing all student subfolders.
+2. Invalid or empty paths are rejected, so you must provide a valid location before continuing.
+
+## Step 2 – Manage Test Cases and Test Suites
+1. You land on the **Test Case / Suite Management** screen.
+2. Pick the folder that contains (or will contain) your `test-cases/` and `test-suites/` directories.  
+   - This path is used both for loading existing assets and saving anything new you create.
+3. Create a suite or select an existing one:
+   - When selecting, the tool scans the chosen folder for suite files and lists them.
+   - When creating, click **Create New Suite**, give it a title, and it will be saved in the selected location.
+
+### Working With Test Cases
+- To build out a suite, either:
+  - Add previously saved cases, or
+  - Create brand-new ones (provide input, expected output, and type).
+- New cases are saved under the `test-cases/` folder.
+- Use **Add Test Case to Suite** to populate the active suite; the dropdown shows every case file found.
+- Remove a case by selecting it in the suite list and clicking **Remove**.
+- Need to edit/delete a case globally? Choose **Manage Test Cases**, pick the case, then **Modify** or **Delete**.  
+  Changes here apply everywhere that case is used.
+
+## Step 3 – Execute the Suite
+1. When the suite looks good, press **Execute Test Suite**.
+2. The app prompts for the path or nested folder structure that holds each student's code.  
+   - Leave it blank if each submission's `Main`/entry point sits directly in the student's folder.
+3. Start execution again from that screen to run all students through the selected suite.
+
+## Step 4 – Review Results
+- Results appear as rows using the format  
+  `FolderName/StudentName | TestCaseName | Status`
+  - Example: `Christian | Add Zero | FAIL`
+- Highlight a row and click **View Comparison** to open a side-by-side view:
+  - Left: expected output
+  - Right: actual output
+  - Works for every student/case combination.
+
+## Step 5 – Save the Results (Optional)
+- Use **Save As** to export the current results to a `.txt` file anywhere you like.
+- The saved report groups entries by student, notes which suite was executed, and ends with a short summary.
+
+---
+
+This Markdown version mirrors the original workflow description but is formatted for quick scanning and easier sharing.

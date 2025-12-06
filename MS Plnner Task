@@ -1,0 +1,29 @@
+https://planner.cloud.microsoft/webui/v1/alltasks/view/board/task/zoWenxHhfkqisWj4_QGz9GQAFKXO?tid=244e6ed2-339a-47f3-b95c-e45351c198b7 
+
+This folder contains the design artifacts created before coding, as required in the assignment instructions.
+
+These diagrams reflect our current codebase and show the planned modifications needed to support the new features (storing results, reloading files, comparing results, multi-file submissions, etc.).
+What’s Included:
+Updated Class Diagram
+Shows the existing classes plus the new responsibilities and relationships needed for the added features. The diagram preserves the structure of the original design so the evolution of the system is visible.
+
+Sequence Diagrams
+Each sequence diagram illustrates how the system will handle a specific new feature:
+Running a test suite and storing results
+Running the test suite on another folder
+Reloading and displaying results
+Comparing two result files
+Detecting and running multi-file Java submissions
+
+Purpose of the Diagrams is,
+These diagrams were created before changing any code, following the instructor’s requirement to plan the design first.
+They show:
+How new features integrate with the existing system
+Which classes are affected
+How objects will interact during each operation
+Who Created What
+Class Diagram: Prabhas
+Sequence Diagram – Storing Results: Prabhas
+Sequence Diagram – Reloading Results: Prabhas
+Sequence Diagram – Comparing Results: Prabhas
+Sequence Diagram – Multi-file Handling: Prabhas

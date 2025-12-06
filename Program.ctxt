@@ -1,9 +1,22 @@
 #BlueJ class context
 comment0.target=Program
+comment0.text=\ Represents\ an\ external\ Java\ program\ submission.\r\n\ This\ class\ is\ responsible\ for\ compiling\ and\ running\ the\ external\ source\ file\r\nand\ managing\ the\ results\ (exit\ code,\ output,\ compilation\ status).
 comment1.params=name\ sourceFile
 comment1.target=Program(java.lang.String,\ java.io.File)
 comment2.params=
 comment2.target=java.lang.String\ getName()
 comment3.params=
 comment3.target=java.io.File\ getSourceFile()
-numComments=4
+comment4.params=
+comment4.target=boolean\ compile()
+comment5.params=
+comment5.target=java.lang.String\ extractClassName()
+comment6.params=inputData
+comment6.target=java.lang.String\ run(java.lang.String)
+comment7.params=
+comment7.target=boolean\ ensureCompiled()
+comment8.params=testCase
+comment8.target=TestResult\ executeTestCase(TestCase)
+comment9.params=actual\ expected\ type
+comment9.target=boolean\ compareOutputs(java.lang.String,\ java.lang.String,\ java.lang.String)
+numComments=10

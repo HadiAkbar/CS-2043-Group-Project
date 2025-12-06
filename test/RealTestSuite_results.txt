@@ -1,0 +1,20 @@
+Test Results for: RealTestSuite
+Generated: Sun Nov 23 15:45:06 AST 2025
+================================================================================
+
+TestProgam(ShouldFail) | Add Two Positive Numbers | FAILED
+TestProgam(ShouldFail) | Add Two Negative Numbers | FAILED
+TestProgam(ShouldFail) | Add Zero | PASSED
+--------------------------------------------------------------------------------
+TestProgram | Add Two Positive Numbers | PASSED
+TestProgram | Add Two Negative Numbers | PASSED
+TestProgram | Add Zero | PASSED
+
+================================================================================
+Summary:
+Total Results: 6
+Passed: 4
+Failed: 2
+Compile Errors: 0
+Runtime Errors: 0
+Skipped: 0
