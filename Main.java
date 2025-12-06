@@ -39,7 +39,7 @@ public class Main extends Application {
 
         // Set the title of the main window
         // Additional: Visible in the window bar and helps identify the app
-        stage.setTitle("Submission 3 Tool");
+        stage.setTitle("Group Project - CS 2043");
 
         stage.show(); // Display the stage on screen
         // Additional: Starts the JavaFX event loop and makes the window interactive
