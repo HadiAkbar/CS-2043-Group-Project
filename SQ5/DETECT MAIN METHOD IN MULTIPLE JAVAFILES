@@ -1,0 +1,17 @@
+This sequence diagram explains how the system identifies which Java file contains the public static void main(String[] args) method within a student's submission folder.
+The Coordinator requests the Program object to locate the main file before attempting compilation. The Program queries the file system to obtain all .java files and iterates through them one by one.
+For each file, the Program opens the file and scans its contents for the main method signature.
+An alt frame handles both outcomes: if the signature is found, the Program records this file as the designated main file and returns it immediately to the Coordinator; if not found, the loop continues until all files have been checked.
+After the loop, a second alt frame represents the two final possibilities—either a main file was successfully detected or none was found. If no main method exists, the Program returns an error to the Coordinator.
+This diagram demonstrates how the system ensures that each student submission has exactly one entry point before compilation.
+
+Key sequence points:
+The Coordinator requests main-method detection using findMainFile().
+The Program retrieves all .java files from the submission folder.
+A loop is used to scan each file individually.
+Each file is opened and scanned for "public static void main(".
+If found, the Program marks the file as the main file and stops searching.
+An internal alt frame handles “found” versus “not found” during scanning.
+A final alt frame handles the two overall outcomes: main file detected or missing.
+If no main method is found, the Program returns an error to the Coordinator.
+This ensures correct compilation and execution for multi-file submissions.
