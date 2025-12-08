@@ -25,13 +25,21 @@ public class TestSuite
 
     // Add a test case filename if not null, empty, or duplicate
     // Additional: Maintains unique references for each suite
-    public void addTestCaseFilename(String filename)
+   public void addTestCaseFilename(String filename)
+   {
+    // Trim to remove accidental spaces that could create duplicate-looking entries
+    if (filename != null)
     {
-        if (filename != null && !filename.isEmpty() && !testCaseFilenames.contains(filename))
-        {
-            testCaseFilenames.add(filename);
-        }
+        filename = filename.trim();
+     }
+
+    // Only add if non-empty and not already in the list
+    if (filename != null && !filename.isEmpty() && !testCaseFilenames.contains(filename))
+    {
+        testCaseFilenames.add(filename);
+     }
     }
+
 
     // Remove a test case filename from the suite
     public void removeTestCaseFilename(String filename)
