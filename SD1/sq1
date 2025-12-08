@@ -1,1 +1,14 @@
-sq1
+This sequence diagram illustrates how the system compares two previously saved test suite execution results—typically representing the first and second student submissions.
+The UI initiates the comparison request, and the Coordinator orchestrates the process by calling the ResultsManager twice to load both result files.
+Each load operation involves reading serialized data from the file system and reconstructing a TestSuiteRunResult object.
+Once both result sets are obtained, the Coordinator extracts and computes success rates for every student found in either file, creates a Comparison object for each student, and applies rules for special cases such as missing submissions or compilation failures.
+Finally, the Coordinator returns a structured comparison list to the UI, which displays the success rates side-by-side.
+
+Key sequence points:
+The UI sends a compareResults(file1, file2) message to the Coordinator.
+The Coordinator sequentially loads both files through the ResultsManager.
+Each load action triggers file system access and deserialization of results.
+The Coordinator computes success rates from both TestSuiteRunResult objects.
+A Comparison object is created for each student to represent old vs. new outcomes.
+Special cases are handled: missing resubmissions, missing first submission, compilation errors, or no tests run.
+The Coordinator returns the comparison results to the UI for final display.
