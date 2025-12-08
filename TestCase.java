@@ -71,13 +71,15 @@ public class TestCase
         {
             throw new IOException("Invalid test case file format");
         }
+         // Trim each field to remove extra spaces or newline characters.
+         // This prevents formatting issues if the .testcase file contains trailing spaces.
+          return new TestCase(
+            lines.get(0).trim(), // title
+            lines.get(2).trim(), // inputData
+            lines.get(3).trim(), // expectedOutput
+            lines.get(1).trim()  // type
+       );
 
-        return new TestCase(
-            lines.get(0), // title
-            lines.get(2), // inputData
-            lines.get(3), // expectedOutput
-            lines.get(1)  // type
-        );
     }
 
     // Helper method to find a folder by name case-insensitively
