@@ -16,17 +16,15 @@ public class TestExecutionResults implements Serializable
     private List<TestResult> results;
     private int totalTestCases;
     
-    public TestExecutionResults(String testSuiteTitle, String rootFolderPath, String codePath, List<TestResult> results)
+    public TestExecutionResults(String testSuiteTitle, String rootFolderPath, String codePath, List<TestResult> results, int totalTestCases)
     {
         this.testSuiteTitle = testSuiteTitle;
         this.rootFolderPath = rootFolderPath;
         this.codePath = codePath;
         this.results = new ArrayList<>(results);
-        // Calculate total test cases from unique test case titles
-        this.totalTestCases = (int) results.stream()
-            .map(TestResult::getTestCaseTitle)
-            .distinct()
-            .count();
+        // Use the provided total test cases count from the suite
+        // This ensures accuracy even if some tests weren't executed or results are missing
+        this.totalTestCases = totalTestCases;
     }
     
     public String getTestSuiteTitle() { return testSuiteTitle; }

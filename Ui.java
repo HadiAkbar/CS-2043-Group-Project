@@ -964,11 +964,14 @@ public class Ui
                 try
                 {
                     // Create TestExecutionResults object with all metadata
+                    // Get total test cases from the suite (not from results, which may be incomplete)
+                    int totalTestCases = coordinator.getCurrentTestSuite().getTestCaseFilenames().size();
                     TestExecutionResults executionResults = new TestExecutionResults(
                         suiteTitle,
                         coordinator.getLastExecutionRootFolder(),
                         coordinator.getLastExecutionCodePath(),
-                        results
+                        results,
+                        totalTestCases
                     );
                     
                     // Save using serialization
