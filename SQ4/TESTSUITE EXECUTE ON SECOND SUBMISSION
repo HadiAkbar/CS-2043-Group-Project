@@ -1,0 +1,16 @@
+This sequence diagram illustrates how the system runs the same test suite on a second folder of student submissions, typically representing a resubmission.
+The UI initiates the action by selecting a test suite and the second submission directory.
+The Coordinator begins by retrieving the appropriate TestSuite object from the list of available test suites.
+It then loads all programs from the new folder using the ListOfPrograms component. For each program, the Coordinator attempts to compile the student's code; if compilation succeeds, the program is executed against every test case in the selected TestSuite.
+Each execution produces a TestResult, which is recorded for later analysis. Once all programs and test cases have been processed, the Coordinator sends the complete set of results back to the UI for display.
+This diagram mirrors the Version-1 execution process but applies it to a different folder, enabling comparison between two different student submissions.
+
+Key sequence points:
+The UI requests execution using executeTestSuite(name, path2).
+The Coordinator retrieves the appropriate TestSuite.
+The second submission folder is loaded as a new ListOfPrograms.
+For each program, the Coordinator attempts compilation and handles failures.
+Successful programs are run against every test case in the TestSuite.
+A TestResult is created for each test case execution.
+Final execution outcomes are sent back to the UI for summary display.
+Enables fair comparison between original submission and resubmission results.
