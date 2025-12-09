@@ -18,20 +18,26 @@ public class Program
     private Integer lastExitCode = null; // Exit code from last program execution
     private String className = null; // Cached class name extracted from source file
 
-    // Constructor: initializes a Program object with a name and source file
-    // Additional: Used to represent a student's submission in the grading system
+    /**
+     * Constructor: initializes a Program object with a name and source file.
+     * Used to represent a student's submission in the grading system.
+     */
     public Program(String name, File sourceFile)
     {
         this.name = name;
         this.sourceFile = sourceFile;
     }
 
-    // Returns the name of the program/student
-    // Additional: Useful for reporting results or displaying student info
+    /**
+     * Returns the name of the program/student.
+     * Useful for reporting results or displaying student info.
+     */
     public String getName() { return name; }
 
-    // Returns the Java source file
-    // Additional: Needed for compiling or executing the student's program
+    /**
+     * Returns the Java source file.
+     * Needed for compiling or executing the student's program.
+     */
     public File getSourceFile() { return sourceFile; }
     
     //Attempts to compile the source file using the 'javac' command.

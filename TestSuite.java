@@ -8,8 +8,10 @@ public class TestSuite
     private String title; // Title of the test suite
     private List<String> testCaseFilenames; // Stores filenames of test cases included in the suite
 
-    // Constructor: Initializes a TestSuite with a title and empty list of test case filenames
-    // Additional: Prepares suite for adding test cases and saving/loading
+    /**
+     * Constructor: Initializes a TestSuite with a title and empty list of test case filenames.
+     * Prepares suite for adding test cases and saving/loading.
+     */
     public TestSuite(String title)
     {
         this.title = title;
@@ -23,8 +25,10 @@ public class TestSuite
     // Returns the list of test case filenames
     public List<String> getTestCaseFilenames() { return testCaseFilenames; }
 
-    // Add a test case filename if not null, empty, or duplicate
-    // Additional: Maintains unique references for each suite
+    /**
+     * Add a test case filename if not null, empty, or duplicate.
+     * Maintains unique references for each suite.
+     */
     public void addTestCaseFilename(String filename)
     {
         if (filename != null && !filename.isEmpty() && !testCaseFilenames.contains(filename))
@@ -39,8 +43,10 @@ public class TestSuite
         testCaseFilenames.remove(filename);
     }
 
-    // Save this test suite to a file in rootFolder/test-suites (case-insensitive folder lookup)
-    // Additional: Creates folder if necessary and writes title + list of test case filenames
+    /**
+     * Save this test suite to a file in rootFolder/test-suites (case-insensitive folder lookup).
+     * Creates folder if necessary and writes title + list of test case filenames.
+     */
     public void saveToFile(String rootFolder) throws IOException
     {
         File rootFolderFile = new File(rootFolder);
@@ -65,8 +71,10 @@ public class TestSuite
         }
     }
 
-    // Load a test suite from a file
-    // Additional: Reads title from first line, remaining lines are test case filenames
+    /**
+     * Load a test suite from a file.
+     * Reads title from first line, remaining lines are test case filenames.
+     */
     public static TestSuite loadFromFile(File suiteFile) throws IOException
     {
         List<String> lines = Files.readAllLines(suiteFile.toPath());
@@ -110,8 +118,10 @@ public class TestSuite
         return null;
     }
 
-    // Helper to sanitize suite title to be a valid filename
-    // Additional: Replaces characters not allowed in filenames with underscore
+    /**
+     * Helper to sanitize suite title to be a valid filename.
+     * Replaces characters not allowed in filenames with underscore.
+     */
     private String sanitizeFilename(String name)
     {
         return name.replaceAll("[^a-zA-Z0-9._-]", "_");
