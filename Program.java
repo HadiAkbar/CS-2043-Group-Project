@@ -60,8 +60,8 @@ public class Program
             // Read combined output (discard for now, but could be logged)
             try (BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream())))
             {
-                String line;
-                while ((line = r.readLine()) != null)
+                // Read all output to prevent process from hanging
+                while (r.readLine() != null)
                 {
                     // Compilation errors are captured but not displayed here
                     // They're indicated by non-zero exit code
