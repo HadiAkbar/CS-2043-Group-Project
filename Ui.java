@@ -1522,12 +1522,25 @@ public class Ui
         dialog.setResultConverter(button -> {
             if (button == okButtonType)
             {
-                return new TestCase(
-                        titleField.getText(),
-                        inputField.getText(),
-                        expectedField.getText(),
-                        typeCombo.getValue()
-                );
+                String title = titleField.getText().trim();
+                String input = inputField.getText();
+                String expected = expectedField.getText();
+                String type = typeCombo.getValue();
+                
+                // Validate input
+                if (title == null || title.isEmpty())
+                {
+                    showErrorDialog("Validation Error", "Test case title cannot be empty.");
+                    return null;
+                }
+                
+                if (type == null || type.isEmpty())
+                {
+                    showErrorDialog("Validation Error", "Please select a test case type.");
+                    return null;
+                }
+                
+                return new TestCase(title, input, expected, type);
             }
             return null;
         });

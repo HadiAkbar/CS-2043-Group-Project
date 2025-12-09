@@ -1,7 +1,9 @@
 #BlueJ class context
 comment0.target=TestResult
+comment0.text=\r\n\ Represents\ the\ result\ of\ running\ ONE\ test\ case\ for\ ONE\ student.\r\n\ This\ class\ is\ Serializable\ so\ we\ can\ save\ the\ results\ to\ a\ file\r\n\ and\ reload\ them\ later\ (for\ comparison\ between\ submissions).\r\n
 comment1.params=studentName\ testCaseTitle\ status\ actualOutput\ expectedOutput
 comment1.target=TestResult(java.lang.String,\ java.lang.String,\ java.lang.String,\ java.lang.String,\ java.lang.String)
+comment1.text=\r\n\ Constructor\:\ creates\ a\ new\ TestResult\ object\ with\ all\ required\ information.\r\n
 comment2.params=
 comment2.target=java.lang.String\ getStudentName()
 comment3.params=
@@ -14,4 +16,5 @@ comment6.params=
 comment6.target=java.lang.String\ getExpectedOutput()
 comment7.params=
 comment7.target=java.lang.String\ toDisplayString()
+comment7.text=\r\n\ Returns\ a\ simplified\ string\ for\ displaying\ the\ result\ in\ lists.\r\n\ Example\ Outputs\:\r\n\ \ \ "Alice\ |\ Test1\ |\ PASSED"\r\n\ \ \ "Bob\ |\ SKIPPED\ -\ missing\ file"\r\n
 numComments=8

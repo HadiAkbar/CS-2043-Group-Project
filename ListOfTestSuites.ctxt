@@ -2,12 +2,17 @@
 comment0.target=ListOfTestSuites
 comment1.params=
 comment1.target=ListOfTestSuites()
+comment1.text=\r\n\ Constructor\:\ Initializes\ the\ internal\ list\ to\ hold\ TestSuite\ objects.\r\n\ Ensures\ the\ class\ starts\ empty\ and\ ready\ to\ add\ test\ suites.\r\n
 comment2.params=
 comment2.target=java.util.List\ getSuites()
+comment2.text=\r\n\ Returns\ the\ list\ of\ all\ test\ suites.\r\n\ Useful\ for\ iterating\ over\ suites\ or\ populating\ UI\ components.\r\n
 comment3.params=suite
 comment3.target=void\ addSuite(TestSuite)
+comment3.text=\r\n\ Adds\ a\ test\ suite\ to\ the\ collection\ if\ it\ is\ not\ null\ and\ not\ already\ present.\r\n\ Prevents\ duplicate\ entries\ and\ ensures\ safe\ addition.\r\n
 comment4.params=suite
 comment4.target=void\ removeSuite(TestSuite)
+comment4.text=\r\n\ Removes\ a\ specific\ test\ suite\ from\ the\ collection.\r\n\ Useful\ for\ deleting\ outdated\ or\ incorrect\ test\ suites.\r\n
 comment5.params=title
 comment5.target=TestSuite\ findSuiteByTitle(java.lang.String)
+comment5.text=\r\n\ Finds\ a\ test\ suite\ by\ its\ title.\r\n\ Returns\ the\ first\ suite\ that\ matches\ the\ title,\ or\ null\ if\ none\ found.\r\n
 numComments=6
