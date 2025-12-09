@@ -210,7 +210,17 @@ public class Program
                 }
             }
             
-            int exitCode = process.waitFor();
+            // Wait for process with timeout (30 seconds) to prevent hanging
+            boolean finished = process.waitFor(30, java.util.concurrent.TimeUnit.SECONDS);
+            if (!finished)
+            {
+                // Process timed out - destroy it
+                process.destroyForcibly();
+                lastExitCode = -1;
+                return "ERROR: Program execution timed out (exceeded 30 seconds)";
+            }
+            
+            int exitCode = process.exitValue();
             
             // Store exit code for runtime error detection
             lastExitCode = exitCode;
