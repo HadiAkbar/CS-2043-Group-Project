@@ -2,6 +2,7 @@
 comment0.target=Main
 comment1.params=args
 comment1.target=void\ main(java.lang.String[])
+comment1.text=\r\n\ Main\ entry\ point\ of\ the\ program.\r\n\ Launches\ the\ JavaFX\ application\ thread.\r\n
 comment2.params=stage
 comment2.target=void\ start(javafx.stage.Stage)
 numComments=3

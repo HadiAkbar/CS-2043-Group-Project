@@ -812,9 +812,9 @@ public class Ui
             styleButton(b);
         }
 
-        // Put save buttons in same row
+        // Put save buttons in same row with left alignment
         HBox saveButtonsBox = new HBox(10, saveAsButton, saveSerializedButton);
-        saveButtonsBox.setStyle("-fx-alignment: center;");
+        saveButtonsBox.setAlignment(javafx.geometry.Pos.BASELINE_LEFT);
         
         VBox layout = new VBox(10,
                 titleLabel,
