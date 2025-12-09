@@ -69,6 +69,12 @@ public class Program
             }
             
             int exit = p.waitFor();
+
+            // Store whether compilation succeeded (true) or failed (false)
+            // This allows other parts of the program to check compile status without re-compiling
+            compilationStatus = (exit == 0);
+        
+            
             if (exit != 0)
             {
                 return false;
@@ -76,12 +82,15 @@ public class Program
             return true;
         }
         catch (IOException e)
-        {    // Failed to start javac process (e.g., 'javac' command not found on system path)
+        {   // Compilation could not be started or was interrupted, treat as failure
+
+            compilationStatus = false;
             return false;
         }
         catch (InterruptedException e)
         {    // Current thread was interrupted while waiting for the process to finish
             Thread.currentThread().interrupt();
+            compilationStatus = false;
             return false;
         }
     }

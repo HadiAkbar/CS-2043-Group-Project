@@ -1,0 +1,14 @@
+This sequence diagram shows how the system reloads a previously saved test suite execution result so it can be viewed again without re-running the tests.
+The process begins when the UI requests to load a specific result file.
+The Coordinator handles this message by calling the ResultsManager, which reads the serialized data from the file system and reconstructs a TestSuiteRunResult object through deserialization.
+Once the result object is created, it is returned to the Coordinator and then passed back to the UI, where it can be displayed to the user as a summary of success rates, test outcomes, or any other stored information.
+The diagram emphasizes the separation of responsibilities: the UI only initiates the action, the Coordinator manages the operation, the ResultsManager performs the load logic, and the file system provides the stored data.
+
+Key sequence points:
+The UI sends a loadResults(file) message to the Coordinator.
+The Coordinator delegates the loading operation to the ResultsManager.
+The ResultsManager accesses the file system to read the stored serialized data.
+The serialized data is deserialized into a TestSuiteRunResult object.
+The completed result object is returned first to the Coordinator and then to the UI.
+The UI displays the loaded result content without running any tests again.
+This feature enables quick review and comparison of stored test execution outcomes.

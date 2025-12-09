@@ -27,8 +27,8 @@ public class Ui
     // This is the entry point of the application after Main initializes the stage
     public void showWelcomeScreen()
     {
-        Label welcomeLabel = new Label("Welcome to Group 3's Submission 3");
-        Button startButton = new Button("Start");
+        Label welcomeLabel = new Label("Group Project - CS2043\nGroup 3");
+        Button startButton = new Button("Click Here to Enter");
 
         // styling
         welcomeLabel.setStyle("-fx-text-fill: #E8E8F2; -fx-font-size: 20px; -fx-font-weight: bold;");

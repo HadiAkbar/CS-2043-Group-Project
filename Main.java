@@ -35,8 +35,9 @@ public class Main extends Application {
         // Show the welcome screen
         ui.showWelcomeScreen();
 
-        // Set the application title
-        stage.setTitle("CS-2043 Automated Testing Tool");
+        // Set the title of the main window
+        // Additional: Visible in the window bar and helps identify the app
+        stage.setTitle("Group Project - CS 2043");
 
         stage.show();
     }

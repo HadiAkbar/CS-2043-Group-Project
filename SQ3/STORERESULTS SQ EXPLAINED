@@ -1,0 +1,14 @@
+This sequence diagram describes how the system saves the results of a completed test suite execution so they can be reused later for display or comparison.
+After the test suite has finished running, the UI requests to store the results in a chosen file.
+The Coordinator receives this request and initiates the process by calling serialization on the TestSuiteRunResult object, converting the internal data—such as success rates, test outcomes, and error messages—into a format suitable for storage.
+The serialized data is then passed to the ResultsManager, which writes it to the file system. Once the file is successfully saved, confirmation flows back from the ResultsManager to the Coordinator and finally to the UI.
+This diagram highlights how responsibilities are divided: the Coordinator manages the operation, the ResultsManager handles file output, and the file system performs the physical write.
+
+Key sequence points:
+The UI requests result storage using storeResults(file).
+The Coordinator triggers serialization on the TestSuiteRunResult object.
+Serialized result data captures all test outcomes and metadata.
+The Coordinator sends the serialized object to the ResultsManager for saving.
+The ResultsManager writes the file to the file system.
+Successful completion is returned through the Coordinator back to the UI.
+This feature allows results to be preserved for future loading or comparison.
