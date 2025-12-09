@@ -17,6 +17,6 @@ Submission 4 Diagrams mainly completed by Prabhas
 
 Work Done By members.
 
-Christian Dennis -> Designed the backend logic for the working of the application.
-Hadi Akbar -> Made the userInterface, bug fixing and code reviews.
-Prabhas Ghana Dulam -> Diagrams + assigned tasks to members. Helped in the logic code + review.
+- Christian Dennis -> Designed the backend logic for the working of the application.
+- Hadi Akbar -> Made the userInterface, bug fixing and code reviews.
+- Prabhas Ghana Dulam -> Diagrams + assigned tasks to members. Helped in the logic code + review.
