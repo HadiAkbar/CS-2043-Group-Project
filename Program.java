@@ -60,8 +60,8 @@ public class Program
             // Read combined output (discard for now, but could be logged)
             try (BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream())))
             {
-                String line;
-                while ((line = r.readLine()) != null)
+                // Read all output to prevent process from hanging
+                while (r.readLine() != null)
                 {
                     // Compilation errors are captured but not displayed here
                     // They're indicated by non-zero exit code
@@ -210,7 +210,17 @@ public class Program
                 }
             }
             
-            int exitCode = process.waitFor();
+            // Wait for process with timeout (30 seconds) to prevent hanging
+            boolean finished = process.waitFor(30, java.util.concurrent.TimeUnit.SECONDS);
+            if (!finished)
+            {
+                // Process timed out - destroy it
+                process.destroyForcibly();
+                lastExitCode = -1;
+                return "ERROR: Program execution timed out (exceeded 30 seconds)";
+            }
+            
+            int exitCode = process.exitValue();
             
             // Store exit code for runtime error detection
             lastExitCode = exitCode;

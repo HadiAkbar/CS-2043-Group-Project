@@ -812,9 +812,9 @@ public class Ui
             styleButton(b);
         }
 
-        // Put save buttons in same row
+        // Put save buttons in same row with left alignment
         HBox saveButtonsBox = new HBox(10, saveAsButton, saveSerializedButton);
-        saveButtonsBox.setStyle("-fx-alignment: center;");
+        saveButtonsBox.setAlignment(javafx.geometry.Pos.BASELINE_LEFT);
         
         VBox layout = new VBox(10,
                 titleLabel,
@@ -1519,12 +1519,25 @@ public class Ui
         dialog.setResultConverter(button -> {
             if (button == okButtonType)
             {
-                return new TestCase(
-                        titleField.getText(),
-                        inputField.getText(),
-                        expectedField.getText(),
-                        typeCombo.getValue()
-                );
+                String title = titleField.getText().trim();
+                String input = inputField.getText();
+                String expected = expectedField.getText();
+                String type = typeCombo.getValue();
+                
+                // Validate input
+                if (title == null || title.isEmpty())
+                {
+                    showErrorDialog("Validation Error", "Test case title cannot be empty.");
+                    return null;
+                }
+                
+                if (type == null || type.isEmpty())
+                {
+                    showErrorDialog("Validation Error", "Please select a test case type.");
+                    return null;
+                }
+                
+                return new TestCase(title, input, expected, type);
             }
             return null;
         });

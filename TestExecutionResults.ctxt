@@ -1,8 +1,9 @@
 #BlueJ class context
 comment0.target=TestExecutionResults
-comment0.text=\r\n\ Class\ to\ store\ test\ execution\ results\ for\ serialization\r\n\ Contains\ all\ test\ results\ along\ with\ metadata\ about\ the\ execution\r\n
+comment0.text=\r\n\ Stores\ ALL\ results\ of\ running\ an\ entire\ test\ suite\ against\ all\ students'\ programs.\r\n\ \r\n\ This\ object\ is\ saved\ using\ serialization\ so\ we\ can\:\r\n\ \ -\ reload\ results\ later,\r\n\ \ -\ compare\ first\ submission\ vs\ second\ submission,\r\n\ \ -\ avoid\ recomputing\ results\ every\ time.\r\n\r\n\ A\ TestExecutionResults\ object\ represents\ ONE\ full\ run\ of\ the\ test\ suite.\r\n
 comment1.params=testSuiteTitle\ rootFolderPath\ codePath\ results
 comment1.target=TestExecutionResults(java.lang.String,\ java.lang.String,\ java.lang.String,\ java.util.List)
+comment1.text=\r\n\ Creates\ a\ TestExecutionResults\ object\ containing\ metadata\ and\ the\ full\ list\ of\ results.\r\n\r\n\ @param\ testSuiteTitle\ \ Name\ of\ the\ suite\ that\ was\ run\r\n\ @param\ rootFolderPath\ \ Student\ submissions\ folder\r\n\ @param\ codePath\ \ \ \ \ \ \ \ Directory\ inside\ each\ student\ folder\ containing\ their\ code\r\n\ @param\ results\ \ \ \ \ \ \ \ \ List\ of\ all\ TestResult\ objects\ produced\ during\ execution\r\n
 comment2.params=
 comment2.target=java.lang.String\ getTestSuiteTitle()
 comment3.params=
@@ -11,6 +12,7 @@ comment4.params=
 comment4.target=java.lang.String\ getCodePath()
 comment5.params=
 comment5.target=java.util.List\ getResults()
+comment5.text=\r\n\ Returns\ a\ COPY\ of\ the\ results\ list\ so\ callers\ cannot\ modify\ the\ internal\ list.\r\n
 comment6.params=
 comment6.target=int\ getTotalTestCases()
 numComments=7
