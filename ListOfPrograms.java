@@ -11,59 +11,71 @@ public class ListOfPrograms
     private List<Program> programs; // Stores all detected student programs
     private List<String> skippedFolders; // Stores folder names that were skipped (no main method found)
 
-    // Additional: Initializes the internal list to hold Program objects.
+    /**
+     * Constructor: Initializes the internal list to hold Program objects.
+     */
     public ListOfPrograms()
     {
         this.programs = new ArrayList<>();
         this.skippedFolders = new ArrayList<>();
     }
 
-    // Additional: Adds a Program object to the collection.
+    /**
+     * Adds a Program object to the collection.
+     */
     public void addProgram(Program program)
     {
         programs.add(program);
     }
 
-    // Additional: Returns the list of all stored Program objects.
+    /**
+     * Returns the list of all stored Program objects.
+     */
     public List<Program> getPrograms()
     {
         return programs;
     }
 
-    // Returns the list of folder names that were skipped (no main method found)
-    // Additional: Useful for reporting which student submissions couldn't be loaded
+    /**
+     * Returns the list of folder names that were skipped (no main method found).
+     * Useful for reporting which student submissions couldn't be loaded.
+     */
     public List<String> getSkippedFolders()
     {
         return skippedFolders;
     }
 
-    // Method to load all subfolders from root folder as programs
-    // Each subfolder represents a student submission
-    // Additional: This convenience method assumes all code is stored directly in each submission folder.
+    /**
+     * Method to load all subfolders from root folder as programs.
+     * Each subfolder represents a student submission.
+     * This convenience method assumes all code is stored directly in each submission folder.
+     */
     public void loadFromRootFolder(File root)
     {
         loadFromRootFolder(root, "");
     }
 
-    // Method to load programs from root folder with optional code path
-    // codePath is the subfolder within each submission (e.g., "src")
-    // If codePath is empty, looks for Java files directly in submission folder
-    // Additional: This supports multiple project structures by allowing nested code folders.
+    /**
+     * Method to load programs from root folder with optional code path.
+     * codePath is the subfolder within each submission (e.g., "src").
+     * If codePath is empty, looks for Java files directly in submission folder.
+     * This supports multiple project structures by allowing nested code folders.
+     */
     public void loadFromRootFolder(File root, String codePath)
     {
-        programs.clear(); // Additional: Reset list before loading to avoid duplicates.
-        skippedFolders.clear(); // Reset skipped folders list
+        programs.clear();
+        skippedFolders.clear();
 
-        if (root.isDirectory()) // Additional: Ensure provided root is a valid directory.
+        if (root.isDirectory())
         {
-            for (File folder : root.listFiles(File::isDirectory)) // Additional: Iterate student submission folders.
+            for (File folder : root.listFiles(File::isDirectory))
             {
-                File searchFolder = folder; // Additional: Default search location is the submission root.
+                File searchFolder = folder;
                 
                 // If code path is specified, look in that subfolder
                 if (codePath != null && !codePath.trim().isEmpty())
                 {
-                    searchFolder = new File(folder, codePath.trim()); // Additional: Navigate into nested code folder.
+                    searchFolder = new File(folder, codePath.trim());
                 }
                 
                 // Find Java files in the search folder
@@ -71,7 +83,6 @@ public class ListOfPrograms
                 {
                     File[] javaFiles = searchFolder.listFiles(f -> f.getName().endsWith(".java"));
 
-                    // Additional: Only detect Java files; assumes student submits at least one .java file.
                     if (javaFiles != null && javaFiles.length > 0)
                     {
                         // Search for the Java file containing public static void main

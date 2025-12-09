@@ -17,8 +17,10 @@ public class Coordinator
     private ListOfPrograms listOfPrograms; // List of student programs to test
     private TestSuite currentTestSuite; // The test suite currently selected
 
-    // Constructor initializes lists and sets no current test suite
-    /* Additional: Initializes internal lists so Coordinator starts in a clean state. */
+    /**
+     * Constructor initializes lists and sets no current test suite.
+     * Initializes internal lists so Coordinator starts in a clean state.
+     */
     public Coordinator()
     {
         this.listOfTestSuites = new ListOfTestSuites();
@@ -27,29 +29,36 @@ public class Coordinator
         this.currentTestSuite = null;
     }
 
-    // Returns the folder containing student submissions
-    /* Additional: Getter used when accessing where student submissions are stored. */
+    /**
+     * Returns the folder containing student submissions.
+     */
     public String getRootFolder()
     {
         return rootFolder;
     }
 
-    // Sets the folder containing student submissions
-    /* Additional: Updates the directory path where all student code is located. */
+    /**
+     * Sets the folder containing student submissions.
+     * Updates the directory path where all student code is located.
+     */
     public void setRootFolder(String rootFolder)
     {
         this.rootFolder = rootFolder;
     }
 
-    // Returns the save folder path
-    /* Additional: Returns where all test definitions (cases + suites) are saved on disk. */
+    /**
+     * Returns the save folder path.
+     * Returns where all test definitions (cases + suites) are saved on disk.
+     */
     public String getSaveFolder()
     {
         return saveFolder;
     }
 
-    // Sets the save folder path and loads existing test cases and suites
-    /* Additional: Sets save folder and immediately attempts to preload all saved test data. */
+    /**
+     * Sets the save folder path and loads existing test cases and suites.
+     * Sets save folder and immediately attempts to preload all saved test data.
+     */
     public void setSaveFolder(String saveFolder)
     {
         this.saveFolder = saveFolder;
@@ -57,8 +66,10 @@ public class Coordinator
         loadTestSuitesFromFolder(); // Load .suite files
     }
 
-    // Creates a new test suite and sets it as the current one
-    /* Additional: Creates a new test suite container for grouping test cases. */
+    /**
+     * Creates a new test suite and sets it as the current one.
+     * Creates a new test suite container for grouping test cases.
+     */
     public void createTestSuite(String title)
     {
         TestSuite suite = new TestSuite(title);
@@ -66,8 +77,10 @@ public class Coordinator
         currentTestSuite = suite;
     }
 
-    // Saves a given test suite to the save folder
-    /* Additional: Serializes a TestSuite object into a file so it persists between sessions. */
+    /**
+     * Saves a given test suite to the save folder.
+     * Serializes a TestSuite object into a file so it persists between sessions.
+     */
     public void saveTestSuite(TestSuite suite) throws IOException
     {
         if (saveFolder == null || saveFolder.isEmpty())
@@ -77,8 +90,10 @@ public class Coordinator
         suite.saveToFile(saveFolder);
     }
 
-    // Loads the first available test suite and sets it as current
-    /* Additional: Convenience method to quickly pick the first loaded suite as the active one. */
+    /**
+     * Loads the first available test suite and sets it as current.
+     * Convenience method to quickly pick the first loaded suite as the active one.
+     */
     public void loadTestSuite()
     {
         if (!listOfTestSuites.getSuites().isEmpty())
@@ -87,15 +102,19 @@ public class Coordinator
         }
     }
 
-    // Returns all test suites
-    /* Additional: Allows UI or caller to retrieve all known test suites. */
+    /**
+     * Returns all test suites.
+     * Allows UI or caller to retrieve all known test suites.
+     */
     public List<TestSuite> getAllTestSuites()
     {
         return listOfTestSuites.getSuites();
     }
 
-    // Loads a single test suite from a file and sets it as current
-    /* Additional: Loads a suite from disk and makes it instantly usable. */
+    /**
+     * Loads a single test suite from a file and sets it as current.
+     * Loads a suite from disk and makes it instantly usable.
+     */
     public void loadTestSuiteFromFile(File suiteFile) throws IOException
     {
         TestSuite suite = TestSuite.loadFromFile(suiteFile);
@@ -103,36 +122,46 @@ public class Coordinator
         currentTestSuite = suite;
     }
 
-    // Returns the currently selected test suite
-    /* Additional: Returns whichever suite the instructor/user is currently working on. */
+    /**
+     * Returns the currently selected test suite.
+     * Returns whichever suite the instructor/user is currently working on.
+     */
     public TestSuite getCurrentTestSuite()
     {
         return currentTestSuite;
     }
 
-    // Sets the currently active test suite
-    /* Additional: Manually switches the working suite to another chosen one. */
+    /**
+     * Sets the currently active test suite.
+     * Manually switches the working suite to another chosen one.
+     */
     public void setCurrentTestSuite(TestSuite suite)
     {
         this.currentTestSuite = suite;
     }
 
-    // Returns list of all test suites
-    /* Additional: Gives direct access to underlying TestSuite collection wrapper. */
+    /**
+     * Returns list of all test suites.
+     * Gives direct access to underlying TestSuite collection wrapper.
+     */
     public ListOfTestSuites getListOfTestSuites()
     {
         return listOfTestSuites;
     }
 
-    // Returns list of all test cases
-    /* Additional: Gives access to global pool of test cases available for suite building. */
+    /**
+     * Returns list of all test cases.
+     * Gives access to global pool of test cases available for suite building.
+     */
     public ListOfTestCases getListOfTestCases()
     {
         return listOfTestCases;
     }
 
-    // Saves a test case to file and adds it to the global list
-    /* Additional: Adds a new test case to storage AND registers it in memory for immediate use. */
+    /**
+     * Saves a test case to file and adds it to the global list.
+     * Adds a new test case to storage AND registers it in memory for immediate use.
+     */
     public void createAndSaveTestCase(TestCase testCase) throws IOException
     {
         if (saveFolder == null || saveFolder.isEmpty())
@@ -143,8 +172,10 @@ public class Coordinator
         listOfTestCases.addTestCase(testCase);
     }
 
-    // Returns a test case by its filename, or null if not found
-    /* Additional: Uses stream filtering to find a test case matching its stored filename. */
+    /**
+     * Returns a test case by its filename, or null if not found.
+     * Uses stream filtering to find a test case matching its stored filename.
+     */
     public TestCase getTestCaseByFilename(String filename)
     {
         return listOfTestCases.getTestCases().stream()
@@ -176,8 +207,10 @@ public class Coordinator
         return null;
     }
 
-    // Loads all .testcase files from the test-cases folder
-    /* Additional: Scans saved test-case folder and loads all .testcase files into memory. */
+    /**
+     * Loads all .testcase files from the test-cases folder.
+     * Scans saved test-case folder and loads all .testcase files into memory.
+     */
     private void loadTestCasesFromFolder()
     {
         if (saveFolder == null || saveFolder.isEmpty())
@@ -210,8 +243,10 @@ public class Coordinator
         }
     }
 
-    // Loads all .suite files from the test-suites folder
-    /* Additional: Scans saved suite folder to restore previously created test suites. */
+    /**
+     * Loads all .suite files from the test-suites folder.
+     * Scans saved suite folder to restore previously created test suites.
+     */
     private void loadTestSuitesFromFolder()
     {
         if (saveFolder == null || saveFolder.isEmpty())
@@ -244,8 +279,10 @@ public class Coordinator
         }
     }
 
-    // Returns a list of filenames for all available test cases
-    /* Additional: Used to populate dropdowns or selection lists in UI. */
+    /**
+     * Returns a list of filenames for all available test cases.
+     * Used to populate dropdowns or selection lists in UI.
+     */
     public List<String> getAvailableTestCaseFilenames()
     {
         List<String> filenames = new ArrayList<>();
@@ -373,15 +410,19 @@ public class Coordinator
         return null;
     }
 
-    // Returns list of folder names that were skipped during program loading (no main method found)
-    // Additional: Useful for informing the user which student submissions couldn't be tested
+    /**
+     * Returns list of folder names that were skipped during program loading (no main method found).
+     * Useful for informing the user which student submissions couldn't be tested.
+     */
     public List<String> getSkippedFolders()
     {
         return listOfPrograms.getSkippedFolders();
     }
     
-    // Saves test execution results to a file using object serialization
-    // Additional: Allows results to be stored and reloaded later for comparison
+    /**
+     * Saves test execution results to a file using object serialization.
+     * Allows results to be stored and reloaded later for comparison.
+     */
     public void saveTestExecutionResults(TestExecutionResults results, File file) throws IOException
     {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file)))
@@ -390,8 +431,10 @@ public class Coordinator
         }
     }
     
-    // Loads test execution results from a file using object deserialization
-    // Additional: Restores previously saved test results for viewing or comparison
+    /**
+     * Loads test execution results from a file using object deserialization.
+     * Restores previously saved test results for viewing or comparison.
+     */
     public TestExecutionResults loadTestExecutionResults(File file) throws IOException, ClassNotFoundException
     {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file)))
